@@ -1,8 +1,12 @@
-FROM raspbian/wheezy
+#FROM raspbian/stretch
+FROM debian:stretch
+ENV DEBIAN_FRONTEND=noninteractive
+COPY repos/nonfree.repo /etc/apt/sources.list.d/
 
 RUN useradd zxspectrum -d /home/zxspectrum
-RUN apt install -q fuse-emulator-common spectrum-roms ffmpeg python python-pip
-
+RUN apt-get update
+RUN apt-get install -yq fuse-emulator-common ffmpeg python python-pip
+RUN apt-get install -yq spectrum-roms
 COPY . /home/zxspectrum
 USER zxspectrum
 WORKDIR /home/zxspectrum
