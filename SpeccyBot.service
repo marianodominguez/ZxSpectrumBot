@@ -5,7 +5,7 @@ Description=Atari Bot
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 -u /home/atari8/bot/AtariBot.py
+ExecStart=/usr/bin/python3 -u /home/zxspectrum/bot/SpeccyBot.py
 WorkingDirectory=/home/atari8/bot/
 StandardOutput=inherit
 StandardError=inherit
