@@ -116,7 +116,6 @@ def check_mentions(api, since_id):
             logger.error("Yikes! Langauge not valid")
             continue
 
-
         logger.info("Firing up emulator")
         if language==0: #BASIC
             cmd = '/usr/bin/fuse --autoload --tape working/tape.tap'.split()
