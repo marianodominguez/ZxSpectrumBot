@@ -155,7 +155,7 @@ def check_mentions(api, since_id):
     return new_since_id
 
 def main():
-    os.chdir('/home/atari8/bot/')
+    os.chdir('/home/zxspectrum/bot/')
 
     api = create_api()
 
