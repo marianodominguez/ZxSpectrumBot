@@ -1,0 +1,5 @@
+tweepy
+logging
+shutil
+datetime
+unidecode

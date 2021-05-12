@@ -55,34 +55,6 @@ def check_mentions(api, since_id):
 
         language = 0 # default to BASIC
 
-        exp = "{\w*?P\w*(?:}|\s)" #{P
-        if re.search(exp,basiccode): 
-            language=1 #it's PILOT
-            logger.info("it's PILOT")
-
-        exp = "{\w*?L\w*(?:}|\s)" #{L
-        if re.search(exp,basiccode):
-            language=3 #it's LOGO
-            logger.info("it's LOGO")
-            if starttime==4:
-                starttime=0
-
-        exp = "{\w*?C\w*(?:}|\s)" #{C
-        if re.search(exp,basiccode):
-            language=4 #it's Action!
-            logger.info("it's Action!")
-            if starttime==4:
-                starttime=0
-
-        exp = "{\w*?M\w*(?:}|\s)" #{M
-        if re.search(exp,basiccode):
-            language=5 #MS BASIC
-            logger.info("it's MS BASIC")
-
-        exp = "{\w*?Q\w*(?:}|\s)" #{Q
-        if re.search(exp,basiccode):
-            language=6 #SuperPILOT
-            logger.info("it's SuperPILOT")
 
         exp = "{\w*?A\w*(?:}|\s)" #{A
         if re.search(exp,basiccode): 
@@ -93,7 +65,7 @@ def check_mentions(api, since_id):
             lineNum=0
             newcode=""
 
-            opcodes=['ADC','AND','ASL','BCC','BCS','BEQ','BIT','BMI','BNE','BPL','BRK','BVC','BVS','CLC','CLD','CLI','CLV','CMP','CPX','CPY','DEC','DEX','DEY','EOR','INC','INX','INY','JMP','JSR','LDA','LDX','LDY','LSR','NOP','ORA','PHA','PHP','PLA','PLP','ROL','ROR','RTI','RTS','SBC','SEC','SED','SEI','STA','STX','STY','TAX','TAY','TSX','TXA','TXS','TYA','*=']
+            opcodes=['*=']
 
             for line in basiccode.splitlines(True):
                 #word = line.split()[0].upper()
@@ -123,55 +95,22 @@ def check_mentions(api, since_id):
         if language>0: #not BASIC
             basiccode=basiccode + "\n"
             basiccode=basiccode.replace("\n",chr(0x9B))
-            outputFile = open('working/incomingBASIC.txt','w',encoding='latin')
+            outputFile = open('working/AUTORUN.BAS','w',encoding='latin')
         else:
-            outputFile = open('working/incomingBASIC.txt','w')
+            outputFile = open('working/AUTORUN.BAS','w')
 
         outputFile.write(basiccode)
         outputFile.close()
 
         if language==0: #BASIC
-            #tokenize BASIC program
-            result = os.system('basicParser -b -f -k -o working/AUTORUN.BAS working/incomingBASIC.txt')
-            if result==256:
-                logger.info("!!! PARSER FAILED, SKIPPING")
-                continue
-
-
-        if language==0: #BASIC
             logger.info("Making disk image, moving tokenized BASIC")
-            copyfile('assets/TBXL.atr','working/disk.atr')
-            result = os.system('/usr/local/franny/bin/franny -A working/disk.atr -i working/AUTORUN.BAS -o AUTORUN.BAS')
-
-        elif language==1: #PILOT
-            logger.info("Making disk image, moving text PILOT")
-            copyfile('assets/pilot.atr','working/disk.atr')
-            result = os.system('/usr/local/franny/bin/franny -A working/disk.atr -i working/incomingBASIC.txt -o MENU.SYS')
+            result = os.system('bas2tap working/AUTORUN.BAS -a working/tape.tap')
 
         elif language==2: #ASM
             logger.info("Making disk image, moving text ASM")
-            copyfile('assets/asm.atr','working/disk.atr')
-            result = os.system('/usr/local/franny/bin/franny -A working/disk.atr -i working/incomingBASIC.txt -o PROG')
-
-        elif language==3: #Logo
-            logger.info("Making disk image, moving text logo")
-            copyfile('assets/dos2.atr','working/disk.atr')
-            result = os.system('/usr/local/franny/bin/franny -A working/disk.atr -i working/incomingBASIC.txt -o PROG')
-
-        elif language==4: #Action!
-            logger.info("Making disk image, moving action code")
-            copyfile('assets/action.atr','working/disk.atr')
-            result = os.system('/usr/local/franny/bin/franny -A working/disk.atr -i working/incomingBASIC.txt -o BOT.ACT')
-
-        elif language==5: #MS BASIC
-            logger.info("Making disk image, moving MS BASIC code")
-            copyfile('assets/MSBASIC.atr','working/disk.atr')
-            result = os.system('/usr/local/franny/bin/franny -A working/disk.atr -i working/incomingBASIC.txt -o BOT.BAS')
-
-        elif language==6: #SuperPILOT
-            logger.info("Making disk image, moving SuperPILOT code")
-            copyfile('assets/PILOTII.atr','working/disk.atr')
-            result = os.system('/usr/local/franny/bin/franny -A working/disk.atr -i working/incomingBASIC.txt -o PROG')
+            #copyfile('assets/asm.atr','working/disk.atr')
+            #todo run assemblr code and use code2tap
+            result = os.system('')
 
         else:
             logger.error("Yikes! Langauge not valid")
@@ -180,51 +119,12 @@ def check_mentions(api, since_id):
 
         logger.info("Firing up emulator")
         if language==0: #BASIC
-            cmd = '/usr/bin/atari800 -config atari800.cfg working/disk.atr'.split()
-        elif language==1: #PILOT
-            cmd = '/usr/bin/atari800 -config atari800.cfg -cart assets/PILOT.ROM -cart-type 1 working/disk.atr'.split()
+            cmd = '/usr/bin/fuse --autoload --tape working/tape.tap'.split()
         elif language==2: #ASM
-            cmd = '/usr/bin/atari800 -config atari800.cfg -cart assets/ASM.rom -cart-type 1 working/disk.atr'.split()
-        elif language==3: #Logo
-            cmd = '/usr/bin/atari800 -config atari800.cfg -cart assets/logo.ROM -cart-type 2 working/disk.atr'.split()
-        elif language==4: #Action!
-            cmd = '/usr/bin/atari800 -config atari800.cfg -cart assets/action.ROM -cart-type 15 working/disk.atr'.split()
-        elif language==5: #MS BASIC
-            cmd = '/usr/bin/atari800 -config atari800.cfg -cart assets/MSBASIC.bin -cart-type 2 working/disk.atr'.split()
-        elif language==6: #SuperPILOT
-            cmd = '/usr/bin/atari800 -config atari800.cfg working/disk.atr'.split()
-
+            cmd = '/usr/bin/fuse working/tape.tap'.split()
 
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
         logger.info(f"   Process ID {emuPid.pid}")
-
-        if language==3: #Logo
-            time.sleep(7) #time to boot before typing
-            logger.info("Typing logo commands")
-            os.system('xdotool search --class atari type --delay 200 \'LOAD "D:PROG\r\'')
-
-        if language==5: #MS BASIC
-            time.sleep(7) #time to boot before typing
-            logger.info("Typing BASIC RUN command")
-            os.system('xdotool search --class atari type --delay 200 \'LOAD "D:BOT.BAS\r\'')
-            time.sleep(3)
-            os.system('xdotool type --delay 200 \'RUN\r\'')
-
-        if language==6: #SuperPILOT
-            time.sleep(7) #time to boot before typing
-            logger.info("Typing PILOT commands")
-            os.system('xdotool search --class atari type --delay 200 \'LOAD D:PROG\r\'')
-            time.sleep(5)
-            os.system('xdotool type --delay 200 \'RUN\r\'')
-
-        if language==4: #Action!
-            time.sleep(6) #time to boot before typing
-            logger.info("Typing Action! commands")
-            os.system('xdotool search --class atari key --delay 200 ctrl+shift+R  type --delay 200 \'D:BOT.ACT\r\'')
-            time.sleep(5)
-            os.system('xdotool key --delay 200 ctrl+shift+M type --delay 200 \'COMPILE\r\'')
-            time.sleep(14)
-            os.system('xdotool type --delay 200 \'RUN\r\'')
 
         time.sleep(starttime)
 
