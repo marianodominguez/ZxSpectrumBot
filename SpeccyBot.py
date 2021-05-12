@@ -94,7 +94,7 @@ def check_mentions(api, since_id):
 
         if language>0: #not BASIC
             basiccode=basiccode + "\n"
-            basiccode=basiccode.replace("\n",chr(0x9B))
+            #basiccode=basiccode.replace("\n",chr(0x9B))
             outputFile = open('working/AUTORUN.BAS','w',encoding='latin')
         else:
             outputFile = open('working/AUTORUN.BAS','w')
