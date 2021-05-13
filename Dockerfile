@@ -17,7 +17,7 @@ RUN cp assets/bas2tap /usr/bin
 RUN cp assets/bin2tap /usr/bin
 
 USER zxspectrum
-
+RUN mkdir -p bot/working
 RUN pip3 install -r requirements.txt
 
-CMD python3 SpeccyBot.py 
+CMD ./start.sh 
