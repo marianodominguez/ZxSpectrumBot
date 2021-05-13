@@ -17,7 +17,7 @@ RUN cp assets/bas2tap /usr/bin
 RUN cp assets/bin2tap /usr/bin
 
 RUN cd ~ && git clone git://source.ffmpeg.org/ffmpeg --depth=1 && \
- cd ffmpeg && ./configure --arch=armel --target-os=linux --enable-gpl --enable-libx264 --enable-nonfree && \
+ cd ffmpeg && ./configure --arch=armel --target-os=linux --enable-gpl --enable-nonfree && \
  make -j4 && make install
 
 USER zxspectrum
