@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN useradd zxspectrum -d /home/zxspectrum
 RUN apt-get update
-RUN apt-get install -yq fuse-emulator-common ffmpeg python3 python3-pip
+RUN apt-get install -yq fuse-emulator-common ffmpeg python3 python3-pip xvbf
 RUN apt-get install -yq spectrum-roms
 COPY . /home/zxspectrum
 WORKDIR /home/zxspectrum
