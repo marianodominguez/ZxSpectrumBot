@@ -10,6 +10,7 @@ RUN apt-get install -yq fuse-emulator-common xvfb snapd
 RUN apt-get install -yq spectrum-roms 
 COPY --chown=zxspectrum . /home/zxspectrum
 WORKDIR /home/zxspectrum
+RUN systemctl start snapd
 
 RUN gcc -Wall -lm assets/bas2tap.c -o assets/bas2tap
 RUN gcc -Wall -lm assets/bin2tap.c -o assets/bin2tap
