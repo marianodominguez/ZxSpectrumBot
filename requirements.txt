@@ -1,4 +1,2 @@
 tweepy
-shutil
-datetime
 unidecode
