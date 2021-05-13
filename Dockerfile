@@ -1,7 +1,7 @@
 FROM python:3.6-stretch
 #FROM debian:stretch
 ENV DEBIAN_FRONTEND=noninteractive
-#COPY repos/nonfree.repo /etc/apt/sources.list.d/nonfree.list
+COPY repos/nonfree.repo /etc/apt/sources.list.d/nonfree.list
 
 RUN useradd zxspectrum -d /home/zxspectrum
 RUN apt-get update
