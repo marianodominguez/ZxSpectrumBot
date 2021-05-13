@@ -1,11 +1,11 @@
-FROM raspbian/stretch
+FROM python:3.6-stretch
 #FROM debian:stretch
 ENV DEBIAN_FRONTEND=noninteractive
 #COPY repos/nonfree.repo /etc/apt/sources.list.d/nonfree.list
 
 RUN useradd zxspectrum -d /home/zxspectrum
 RUN apt-get update
-RUN apt-get install -yq fuse-emulator-common ffmpeg python3 python3-pip xvfb
+RUN apt-get install -yq fuse-emulator-common ffmpeg  xvfb
 RUN apt-get install -yq spectrum-roms
 COPY --chown=zxspectrum . /home/zxspectrum
 WORKDIR /home/zxspectrum
