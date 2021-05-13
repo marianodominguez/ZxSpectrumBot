@@ -7,7 +7,7 @@ RUN useradd zxspectrum -d /home/zxspectrum
 RUN apt-get update
 RUN apt-get install -yq fuse-emulator-common ffmpeg python3 python3-pip xvfb
 RUN apt-get install -yq spectrum-roms
-COPY . /home/zxspectrum
+COPY --chown=zxspectrum . /home/zxspectrum
 WORKDIR /home/zxspectrum
 
 RUN gcc -Wall -lm assets/bas2tap.c -o assets/bas2tap
