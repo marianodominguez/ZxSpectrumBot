@@ -18,6 +18,8 @@ RUN cp assets/bin2tap /usr/bin
 
 USER zxspectrum
 RUN mkdir -p bot/working
+#get master for video upload
+RUN pip3 install git+https://github.com/tweepy/tweepy.git
 RUN pip3 install -r requirements.txt
 
 CMD ./start.sh 

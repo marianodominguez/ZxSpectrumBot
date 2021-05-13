@@ -118,9 +118,9 @@ def check_mentions(api, since_id):
 
         logger.info("Firing up emulator")
         if language==0: #BASIC
-            cmd = '/usr/bin/fuse --autoload --no-sound --tape working/tape.tap'.split()
+            cmd = '/usr/bin/fuse --auto-load --no-sound --tape working/tape.tap'.split()
         elif language==2: #ASM
-            cmd = '/usr/bin/fuse working/tape.tap'.split()
+            cmd = '/usr/bin/fuse-sdl working/tape.tap'.split()
 
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
         logger.info(f"   Process ID {emuPid.pid}")
