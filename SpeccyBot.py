@@ -139,7 +139,7 @@ def check_mentions(api, since_id):
 
         logger.info("Uploading video")  
 
-        media = api.media_upload("working/OUTPUT_SMALL.mp4")
+        media = api.media_upload("working/OUTPUT_SMALL.mp4", chunked=True)
 
         logger.info(f"Media ID is {media.media_id}")
 
