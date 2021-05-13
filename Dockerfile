@@ -18,7 +18,7 @@ RUN cp assets/bin2tap /usr/bin
 
 #ffmpeg from source to support 8 bits per pixel
 RUN cd ~ && git clone --depth 1 https://code.videolan.org/videolan/x264 && \
- cd x264 && ./configure --host=arm-unknown-linux-gnueabi --enable-static --disable-opencl && \
+ cd x264 && ./configure --host=arm-unknown-linux-gnueabi -fPIC --enable-static --disable-opencl && \
  make -j4 && make install
 
 RUN cd ~ && git clone git://source.ffmpeg.org/ffmpeg --depth=1 && \
