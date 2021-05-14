@@ -61,11 +61,11 @@ def check_mentions(api, since_id):
             language=2 #it's Assembly
             logger.info("it's ASM")
 
-            basiccode = "*=$3000\n" + basiccode
+            basiccode = "*ORG $3000\n" + basiccode
             lineNum=0
             newcode=""
 
-            opcodes=['*=']
+            opcodes=['']
 
             for line in basiccode.splitlines(True):
                 #word = line.split()[0].upper()
@@ -118,9 +118,9 @@ def check_mentions(api, since_id):
 
         logger.info("Firing up emulator")
         if language==0: #BASIC
-            cmd = '/usr/bin/fuse-sdl --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
+            cmd = '/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
         elif language==2: #ASM
-            cmd = '/usr/bin/fuse-sdl --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
+            cmd = '/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
 
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
         logger.info(f"   Process ID {emuPid.pid}")
