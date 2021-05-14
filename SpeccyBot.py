@@ -55,7 +55,6 @@ def check_mentions(api, since_id):
 
         language = 0 # default to BASIC
 
-
         exp = "{\w*?A\w*(?:}|\s)" #{A
         if re.search(exp,basiccode): 
             language=2 #it's Assembly
@@ -114,6 +113,10 @@ def check_mentions(api, since_id):
 
         else:
             logger.error("Yikes! Langauge not valid")
+            continue
+
+        if result!=0:
+            logger.error("Not a valid BASIC program")
             continue
 
         logger.info("Firing up emulator")
