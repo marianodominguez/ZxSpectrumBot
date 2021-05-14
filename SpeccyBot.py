@@ -118,7 +118,7 @@ def check_mentions(api, since_id):
 
         logger.info("Firing up emulator")
         if language==0: #BASIC
-            cmd = 'xvfb-run -e  /usr/bin/fuse --auto-load --no-sound --tape working/tape.tap'.split()
+            cmd = 'xvfb-run -e xvfb-run-errors.txt /usr/bin/fuse --auto-load --no-sound --tape working/tape.tap'.split()
         elif language==2: #ASM
             cmd = 'xvfb-run -e xvfb-run-errors.txt /usr/bin/fuse --tape working/tape.tap'.split()
 
