@@ -118,7 +118,7 @@ def check_mentions(api, since_id):
 
         logger.info("Firing up emulator")
         if language==0: #BASIC
-            cmd = '/usr/bin/fuse-sdl --fbmode 640 --auto-load 640×480--no-sound --tape working/tape.tap'.split()
+            cmd = '/usr/bin/fuse-sdl --fbmode 640 --auto-load --no-sound --tape working/tape.tap'.split()
         elif language==2: #ASM
             cmd = '/usr/bin/fuse-sdl --fbmode 640 --auto-load --no-sound --tape working/tape.tap'.split()
 
