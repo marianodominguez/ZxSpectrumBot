@@ -103,19 +103,19 @@ def check_mentions(api, since_id):
 
         if language==0: #BASIC
             logger.info("Making disk image, moving tokenized BASIC")
-            result = os.system('bas2tap working/AUTORUN.BAS -a working/tape.tap')
+            result = os.popen('bas2tap working/AUTORUN.BAS -a working/tape.tap').read()
 
         elif language==2: #ASM
             logger.info("Making disk image, moving text ASM")
             #copyfile('assets/asm.atr','working/disk.atr')
             #todo run assembler code and use bin2tap
-            result = os.system('bin2tap working/AUTORUN.BAS -a working/tape.tap')
+            result = os.popen('bin2tap working/AUTORUN.BAS -a working/tape.tap').read()
 
         else:
             logger.error("Yikes! Langauge not valid")
             continue
 
-        if result!=0:
+        if "ERROR" in result:
             logger.error("Not a valid BASIC program")
             continue
 
