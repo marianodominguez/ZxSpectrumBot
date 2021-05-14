@@ -118,9 +118,9 @@ def check_mentions(api, since_id):
 
         logger.info("Firing up emulator")
         if language==0: #BASIC
-            cmd = '/usr/bin/fuse-sdl --auto-load --no-sound --tape working/tape.tap'.split()
+            cmd = '/usr/bin/fuse-sdl --fbmode 640 --auto-load 640×480--no-sound --tape working/tape.tap'.split()
         elif language==2: #ASM
-            cmd = '/usr/bin/fuse-sdl --auto-load --no-sound --tape working/tape.tap'.split()
+            cmd = '/usr/bin/fuse-sdl --fbmode 640 --auto-load --no-sound --tape working/tape.tap'.split()
 
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
         logger.info(f"   Process ID {emuPid.pid}")
@@ -128,7 +128,7 @@ def check_mentions(api, since_id):
         time.sleep(starttime)
 
         logger.info("Recording with ffmpeg")
-        result = os.system(f'ffmpeg -y -hide_banner -loglevel info -f x11grab -r 30 -video_size 672x440 -i :99 -q:v 0 -pix_fmt yuv422p -t {recordtime} working/OUTPUT_BIG.mp4')
+        result = os.system(f'ffmpeg -y -hide_banner -loglevel info -f x11grab -r 30 -video_size 640×480 -i :99 -q:v 0 -pix_fmt yuv422p -t {recordtime} working/OUTPUT_BIG.mp4')
 
         logger.info("Stopping emulator")
         emuPid.kill()
