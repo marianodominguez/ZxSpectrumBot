@@ -109,8 +109,8 @@ def check_mentions(api, since_id):
         elif language==2: #ASM
             logger.info("Making disk image, moving text ASM")
             #copyfile('assets/asm.atr','working/disk.atr')
-            #todo run assemblr code and use code2tap
-            result = os.system('')
+            #todo run assembler code and use bin2tap
+            result = os.system('bin2tap working/AUTORUN.BAS -a working/tape.tap')
 
         else:
             logger.error("Yikes! Langauge not valid")
@@ -118,9 +118,9 @@ def check_mentions(api, since_id):
 
         logger.info("Firing up emulator")
         if language==0: #BASIC
-            cmd = '/usr/bin/fuse --auto-load --no-sound --tape working/tape.tap'.split()
+            cmd = 'xvfb-run -e  /usr/bin/fuse --auto-load --no-sound --tape working/tape.tap'.split()
         elif language==2: #ASM
-            cmd = '/usr/bin/fuse working/tape.tap'.split()
+            cmd = 'xvfb-run -e xvfb-run-errors.txt /usr/bin/fuse --tape working/tape.tap'.split()
 
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
         logger.info(f"   Process ID {emuPid.pid}")
