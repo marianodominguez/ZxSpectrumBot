@@ -40,7 +40,7 @@ def check_mentions(api, since_id):
             starttime = int(result.group(1))
             logger.info(f" Requests start at {starttime} seconds")
         else:
-            starttime = 4
+            starttime = 2
 
         #look for length of time to record command
         exp = "{\w*?S(\d\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
