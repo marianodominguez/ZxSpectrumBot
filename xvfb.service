@@ -1,11 +1,11 @@
-#This goes in /etc/systemd/system/SpeccyBot.service to make the bot run at boot
+#This goes in /etc/systemd/system/XvfbBot.service to make the bot run at boot
 
 [Unit]
 Description=Speccy Bot
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 -u /home/zxspectrum/bot/SpeccyBot.py
+ExecStart=Xvfb :99 > /dev/null 2>&1 
 WorkingDirectory=/home/zxspectrum/bot/
 StandardOutput=inherit
 StandardError=inherit
