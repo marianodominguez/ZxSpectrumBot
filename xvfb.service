@@ -5,7 +5,7 @@ Description=Speccy Bot
 After=network.target
 
 [Service]
-ExecStart=Xvfb :99 > /dev/null 2>&1 
+ExecStart=Xvfb :99 
 WorkingDirectory=/home/zxspectrum/bot/
 StandardOutput=inherit
 StandardError=inherit
