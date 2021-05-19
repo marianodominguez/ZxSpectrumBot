@@ -90,8 +90,6 @@ def check_mentions(api, since_id):
             result = os.popen('bas2tap working/AUTORUN.BAS -a working/tape.tap 2>&1').read()
 
         elif language==2: #ASM
-           
-            #copyfile('assets/asm.atr','working/disk.atr')
             #todo run assembler code and use bin2tap
             asmResult = os.popen('z80asm working/AUTORUN.BAS -o working/run.bin 2>&1').read()
             if "error: " in asmResult:
