@@ -7,14 +7,8 @@ RUN useradd zxspectrum -d /home/zxspectrum
 RUN apt-get update
 RUN apt-get install -yq fuse-emulator-common xvfb fuse-emulator-utils spectrum-roms fuse-emulator-sdl ffmpeg
 
-#ffmpeg from source to support 8 bits per pixel
-# RUN cd ~ && git clone --depth 1 https://code.videolan.org/videolan/x264 && \
-#  cd x264 && ./configure --host=arm-unknown-linux-gnueabi --enable-static --enable-shared --disable-opencl && \
-#  make -j4 && make install
-
-# RUN cd ~ && git clone git://source.ffmpeg.org/ffmpeg --depth=1 && \
-#  cd ffmpeg && ./configure --arch=armel --target-os=linux --enable-gpl --enable-shared --enable-libx264 --enable-nonfree && \
-#  make -j4 && make install
+RUN wget http://download.savannah.nongnu.org/releases/z80asm/z80asm-1.8.tar.gz && tar -xzvf z80asm-1.8.tar.gz &&\
+cd z80asm-1.8 && make && cp z80asm /usr/bin
 
 COPY --chown=zxspectrum . /home/zxspectrum
 WORKDIR /home/zxspectrum
