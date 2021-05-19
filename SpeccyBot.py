@@ -60,7 +60,7 @@ def check_mentions(api, since_id):
             language=2 #it's Assembly
             logger.info("it's ASM")
 
-            basiccode = "*ORG $3000\n" + basiccode
+            basiccode = "ORG $8000\n" + basiccode
             lineNum=0
             newcode=""
 
@@ -109,7 +109,11 @@ def check_mentions(api, since_id):
             logger.info("Making disk image, moving text ASM")
             #copyfile('assets/asm.atr','working/disk.atr')
             #todo run assembler code and use bin2tap
-            result = os.popen('bin2tap working/AUTORUN.BAS -a working/tape.tap 2>&1').read()
+            asmResult = os.popen('z80asm working/AUTORUN.BAS -o working/run.bin 2>&1').read()
+            if "error: " in asmResult:
+                logger.error("assembler code not valid")
+                continue
+            result = os.popen('bin2tap working/run.bin -a working/tape.tap 2>&1').read()
 
         else:
             logger.error("Yikes! Langauge not valid")
