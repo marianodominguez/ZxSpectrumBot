@@ -61,22 +61,6 @@ def check_mentions(api, since_id):
             logger.info("it's ASM")
 
             basiccode = "ORG $8000\n" + basiccode
-            lineNum=0
-            newcode=""
-
-            opcodes=['']
-
-            for line in basiccode.splitlines(True):
-                #word = line.split()[0].upper()
-                newcode = newcode + str(lineNum)+' '
-                try:
-                    if line.split()[0].upper() in opcodes or line[0]=="." or line[0]=="*":
-                        newcode = newcode + " "
-                except:
-                    logger.info(f"could not dissect line {line}")
-                newcode = newcode + line
-                lineNum+=1
-            basiccode=newcode
 
         #remove any { command
         #exp = "{\w*(?:}|\s)" #{anything till space or }
@@ -106,14 +90,15 @@ def check_mentions(api, since_id):
             result = os.popen('bas2tap working/AUTORUN.BAS -a working/tape.tap 2>&1').read()
 
         elif language==2: #ASM
-            logger.info("Making disk image, moving text ASM")
+           
             #copyfile('assets/asm.atr','working/disk.atr')
             #todo run assembler code and use bin2tap
             asmResult = os.popen('z80asm working/AUTORUN.BAS -o working/run.bin 2>&1').read()
             if "error: " in asmResult:
                 logger.error("assembler code not valid")
                 continue
-            result = os.popen('bin2tap working/run.bin -a working/tape.tap 2>&1').read()
+            logger.info("Making disk image, moving text ASM")
+            result = os.popen('bin2tap working/run.bin working/tape.tap 2>&1').read()
 
         else:
             logger.error("Yikes! Langauge not valid")
@@ -124,9 +109,7 @@ def check_mentions(api, since_id):
             continue
 
         logger.info("Firing up emulator")
-        if language==0: #BASIC
-            cmd = '/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
-        elif language==2: #ASM
+        if language==0 or language==2: #BASIC or ASM
             cmd = '/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
 
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
