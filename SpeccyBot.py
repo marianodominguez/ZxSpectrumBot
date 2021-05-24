@@ -154,7 +154,7 @@ def check_mentions(api, since_id):
 def reply_tweet(api, tweet, text):
     msg=" "
     for line in text.split("\n"):
-        if "ERROR:"  in line:
+        if "ERROR"  in line:
             msg=msg+line+"\n"
     
     tweettext = f"@{tweet.user.screen_name} \n {msg}"
