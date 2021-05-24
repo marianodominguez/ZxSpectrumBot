@@ -152,12 +152,14 @@ def check_mentions(api, since_id):
     return new_since_id
 
 def reply_tweet(api, tweet, text):
-    msg=""
+    msg=" "
     for line in text.split("\n"):
         if "ERROR:"  in line:
-            msg=msg+line+"\n" 
+            msg=msg+line+"\n"
+    
     tweettext = f"@{tweet.user.screen_name} \n {msg}"
-    api.update_status(auto_populate_reply_metadata=False, status=tweettext, in_reply_to_status_id=tweet.id)
+    logger.info(f"MSG: {tweettext}")
+    api.update_status(auto_populate_reply_metadata=False, status=tweettext.strip(), in_reply_to_status_id=tweet.id)
 
 def main():
     os.chdir('/home/zxspectrum/bot/')
