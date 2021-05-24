@@ -142,7 +142,7 @@ def check_mentions(api, since_id):
         logger.info(f"Media ID is {media.media_id}")
 
         time.sleep(5)
-#TODO replace with get_media_upload_status per https://github.com/tweepy/tweepy/pull/1414
+        #TODO replace with get_media_upload_status per https://github.com/tweepy/tweepy/pull/1414
 
         logger.info(f"Posting tweet to @{tweet.user.screen_name}")
         tweettext = f"@{tweet.user.screen_name} "
@@ -152,6 +152,7 @@ def check_mentions(api, since_id):
     return new_since_id
 
 def reply_tweet(api, tweet, text):
+    msg=""
     for line in text.split("\n"):
         if "ERROR:"  in line:
             msg=msg+line+"\n" 
