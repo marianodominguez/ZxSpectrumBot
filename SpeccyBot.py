@@ -33,6 +33,15 @@ def check_mentions(api, since_id):
         basiccode = basiccode.replace("&amp;", "&")
 
 #determine language:
+
+        #look for Debug command
+        exp = "{\w*?D\w*(?:}|\s)" # {B\d\d  B= Begin
+        result = re.search(exp,basiccode)
+        if result:  
+            debug=True
+        else:
+            debug = False
+
         #look for start time command
         exp = "{\w*?B(\d\d?)\w*(?:}|\s)" # {B\d\d  B= Begin
         result = re.search(exp,basiccode)
@@ -103,6 +112,8 @@ def check_mentions(api, since_id):
 
         if "ERROR" in result:
             logger.error("Not a valid BASIC program")
+            if debug:
+                reply_tweet(api, tweet, result)
             continue
 
         logger.info("Firing up emulator")
@@ -135,11 +146,17 @@ def check_mentions(api, since_id):
 
         logger.info(f"Posting tweet to @{tweet.user.screen_name}")
         tweettext = f"@{tweet.user.screen_name} "
-        post_result = api.update_status(auto_populate_reply_metadata=False, status=tweettext, media_ids=[media.media_id], in_reply_to_status_id=tweet.id)
+        api.update_status(auto_populate_reply_metadata=False, status=tweettext, media_ids=[media.media_id], in_reply_to_status_id=tweet.id)
 
         logger.info("Done!")
-
     return new_since_id
+
+def reply_tweet(api, tweet, text):
+    for line in text.split("\n"):
+        if "ERROR:"  in line:
+            msg=msg+line+"\n" 
+    tweettext = f"@{tweet.user.screen_name} \n {msg}"
+    api.update_status(auto_populate_reply_metadata=False, status=tweettext, in_reply_to_status_id=tweet.id)
 
 def main():
     os.chdir('/home/zxspectrum/bot/')
