@@ -1,5 +1,6 @@
 import urllib2
 import sys
+import urllib
 
 def getGist(gistUrl):
     if not "https://gist.githubusercontent.com" in gistUrl:
@@ -7,7 +8,7 @@ def getGist(gistUrl):
     try:
         response = urllib2.urlopen(gistUrl)
         data = response.read()
-    except URLError, e:
+    except urllib2.URLError, e:
         return "Error: "+e.reason
     if len(data) > 2000:
         return "Error: only 2k of code is allowed"
