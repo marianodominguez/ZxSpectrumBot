@@ -61,7 +61,9 @@ def check_mentions(api, since_id):
             recordtime = 20
         if recordtime <1:
             recordtime=1
-
+        if recordtime >30:
+            recordtime=30
+            
         language = 0 # default to BASIC
 
         exp = "{\w*?A\w*(?:}|\s)" #{A
@@ -112,6 +114,7 @@ def check_mentions(api, since_id):
 
         if "ERROR" in result:
             logger.error("Not a valid BASIC program")
+            logger.error(result)
             if debug:
                 reply_tweet(api, tweet, result)
             continue
