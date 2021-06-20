@@ -31,9 +31,11 @@ def determine_config(full_text, gistUrl):
 
     #if url, get code from it
     if gistUrl:
-        text = GistManager.getGist(gistUrl):
-        if text.beginsWith("Error: "): 
-            log.error(text)
+        text = GistManager.getGist(gistUrl)
+        if text.startswith("Error: "): 
+            logger.info(f"unable to retrieve {gistUrl}, {text}")
+            config['error']=text
+            return config
         else:
             basicode = text 
 
@@ -80,19 +82,20 @@ def determine_config(full_text, gistUrl):
 
     #remove any { command
     #exp = "{\w*(?:}|\s)" #{anything till space or }
-    exp = "{\w*(?:}\s*)" #{anything till } plus trailing whitespace
+    exp = "{\w*(?:}\s*$)" #{anything till } plus trailing whitespace
     basiccode = re.sub(exp,'',basiccode)
 
     #whitespace
     basiccode = basiccode.strip()
-
+    logger.info(f"Code: [{basicode}]")
+    
     #halt if string is empty
     if not basiccode:
         logger.info("!!! basiccode string is empty, SKIPPING")
         config['error']="Error: Empty code"
         return config
     
-    config['starttime']  =startime
+    config['starttime']  =starttime
     config['recordtime'] =recordtime
     config['language']   =language
     config['basiccode']  =basiccode
@@ -101,14 +104,15 @@ def determine_config(full_text, gistUrl):
 def check_mentions(api, since_id):
     logger.info("Retrieving mentions")
     new_since_id = since_id
-    for tweet in tweepy.Cursor(api.mentions_timeline, since_id=since_id, tweet_mode='extended').items():
+    for tweet in tweepy.Cursor(api.mentions_timeline, since_id=since_id, 
+      tweet_mode='extended', include_entities=True).items():
         new_since_id = max(tweet.id, new_since_id)
         url=None
         
         logger.info(f"Tweet from {tweet.user.name}")
         #if there is an url in text, pass the firs
-        if tweet.entities.urls:
-            url=tweet.entities.urls[0].expanded_url
+        if tweet.entities['urls']:
+            url=tweet.entities['urls'][0]['expanded_url']
             
         config=determine_config(tweet.full_text, url)
         
@@ -116,10 +120,13 @@ def check_mentions(api, since_id):
             logger.info(config['error'])
             continue
         
-        language  = config['language']
-        starttime = config['starttime']
-        basiccode = config['basiccode']
-        recordtime= config['recordtime'] 
+        language    = config['language']
+        starttime   = config['starttime']
+        basiccode   = config['basiccode']
+        recordtime  = config['recordtime']
+        debug       = config['debug']
+        
+        logger.info(basiccode)
         
         if language>0: #not BASIC
             basiccode=basiccode + "\n"

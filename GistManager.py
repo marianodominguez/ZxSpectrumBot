@@ -1,6 +1,7 @@
-import urllib2
+import urllib.request as urllib2
 import sys
 import urllib
+from unidecode import unidecode
 
 def getGist(gistUrl):
     if not "https://gist.githubusercontent.com" in gistUrl:
@@ -8,11 +9,9 @@ def getGist(gistUrl):
     try:
         response = urllib2.urlopen(gistUrl)
         data = response.read()
-    except urllib2.URLError, e:
+    except urllib2.URLError as e:
         return "Error: "+e.reason
     if len(data) > 2000:
         return "Error: only 2k of code is allowed"
-    return data
-    
-if __name__ == "__main__":
-    print getGist(sys.argv[1])
+    return str(data.decode())
+
