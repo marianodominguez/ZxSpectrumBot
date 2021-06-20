@@ -17,7 +17,7 @@ logger = logging.getLogger()
 
 def determine_config(full_text, gistUrl):
     config={}
-    config.error=None
+    config['error']=None
     
     #remove all @ mentions, leaving just the BASIC code
     basiccode = re.sub('^(@.+?\s)+','',full_text)
@@ -33,8 +33,9 @@ def determine_config(full_text, gistUrl):
     if gistUrl:
         text = GistManager.getGist(gistUrl):
         if text.beginsWith("Error: "): 
-            text=""
-            basicode = basiccode + "\n" + text 
+            log.error(text)
+        else:
+            basicode = text 
 
     #determine language:
 
@@ -42,9 +43,9 @@ def determine_config(full_text, gistUrl):
     exp = "{\w*?D\w*(?:}|\s)" # {B\d\d  D= debug
     result = re.search(exp,basiccode)
     if result:  
-        config.debug = True
+        config['debug'] = True
     else:
-        config.debug = False
+        config['debug'] = False
 
     #look for start time command
     exp = "{\w*?B(\d\d?)\w*(?:}|\s)" # {B\d\d  B= Begin
@@ -88,12 +89,13 @@ def determine_config(full_text, gistUrl):
     #halt if string is empty
     if not basiccode:
         logger.info("!!! basiccode string is empty, SKIPPING")
-        return config.error="Error: Empty code"
+        config['error']="Error: Empty code"
+        return config
     
-    config.starttime=startime
-    config.recordtime=recordtime
-    config.language=language
-    config.basiccode=basiccode
+    config['starttime']  =startime
+    config['recordtime'] =recordtime
+    config['language']   =language
+    config['basiccode']  =basiccode
     return config
 
 def check_mentions(api, since_id):
@@ -110,13 +112,14 @@ def check_mentions(api, since_id):
             
         config=determine_config(tweet.full_text, url)
         
-        if config.error:
-            logger.info(config.error)
+        if config['error']:
+            logger.info(config['error'])
             continue
         
-        language  = config.language
-        starttime = config.starttime
-        basiccode = config.basiccode
+        language  = config['language']
+        starttime = config['starttime']
+        basiccode = config['basiccode']
+        recordtime= config['recordtime'] 
         
         if language>0: #not BASIC
             basiccode=basiccode + "\n"
@@ -161,7 +164,7 @@ def check_mentions(api, since_id):
         time.sleep(starttime)
 
         logger.info("Recording with ffmpeg")
-        result = os.system(f'ffmpeg -y -hide_banner -loglevel warning -f x11grab -r 30 -video_size 672x440 -i :99 -q:v 0 -pix_fmt yuv422p -t {config.recordtime} working/OUTPUT_BIG.mp4')
+        result = os.system(f'ffmpeg -y -hide_banner -loglevel warning -f x11grab -r 30 -video_size 672x440 -i :99 -q:v 0 -pix_fmt yuv422p -t {recordtime} working/OUTPUT_BIG.mp4')
 
         logger.info("Stopping emulator")
         emuPid.kill()
