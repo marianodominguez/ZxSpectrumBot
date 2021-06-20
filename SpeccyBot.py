@@ -10,82 +10,114 @@ import subprocess
 from datetime import datetime
 from unidecode import unidecode
 import re
+import GistManager
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
+
+def determine_config(full_text, gistUrl):
+    config={}
+    config.error=None
+    
+    #remove all @ mentions, leaving just the BASIC code
+    basiccode = re.sub('^(@.+?\s)+','',full_text)
+
+    basiccode = unidecode(basiccode)
+
+    #unescape >, <, and &
+    basiccode = basiccode.replace("&lt;", "<")
+    basiccode = basiccode.replace("&gt;", ">")
+    basiccode = basiccode.replace("&amp;", "&")
+
+    #if url, get code from it
+    if gistUrl:
+        text = GistManager.getGist(gistUrl):
+        if text.beginsWith("Error: "): 
+            text=""
+            basicode = basiccode + "\n" + text 
+
+    #determine language:
+
+    #look for Debug command
+    exp = "{\w*?D\w*(?:}|\s)" # {B\d\d  D= debug
+    result = re.search(exp,basiccode)
+    if result:  
+        config.debug = True
+    else:
+        config.debug = False
+
+    #look for start time command
+    exp = "{\w*?B(\d\d?)\w*(?:}|\s)" # {B\d\d  B= Begin
+    result = re.search(exp,basiccode)
+    if result:  
+        starttime = int(result.group(1))
+        logger.info(f" Requests start at {starttime} seconds")
+    else:
+        starttime = 2
+
+    #look for length of time to record command
+    exp = "{\w*?S(\d\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
+    result=re.search(exp,basiccode)
+    if result:
+        recordtime = int(result.group(1))
+        logger.info(f" Requests record for {recordtime} seconds")
+    else:
+        recordtime = 20
+    if recordtime <1:
+        recordtime=1
+    if recordtime >30:
+        recordtime=30
+        
+    language = 0 # default to BASIC
+
+    exp = "{\w*?A\w*(?:}|\s)" #{A
+    if re.search(exp,basiccode): 
+        language=2 #it's Assembly
+        logger.info("it's ASM")
+
+        basiccode = "ORG $8000\n" + basiccode
+
+    #remove any { command
+    #exp = "{\w*(?:}|\s)" #{anything till space or }
+    exp = "{\w*(?:}\s*)" #{anything till } plus trailing whitespace
+    basiccode = re.sub(exp,'',basiccode)
+
+    #whitespace
+    basiccode = basiccode.strip()
+
+    #halt if string is empty
+    if not basiccode:
+        logger.info("!!! basiccode string is empty, SKIPPING")
+        return config.error="Error: Empty code"
+    
+    config.starttime=startime
+    config.recordtime=recordtime
+    config.language=language
+    config.basiccode=basiccode
+    return config
 
 def check_mentions(api, since_id):
     logger.info("Retrieving mentions")
     new_since_id = since_id
     for tweet in tweepy.Cursor(api.mentions_timeline, since_id=since_id, tweet_mode='extended').items():
         new_since_id = max(tweet.id, new_since_id)
-
+        url=None
+        
         logger.info(f"Tweet from {tweet.user.name}")
-
-        #remove all @ mentions, leaving just the BASIC code
-        basiccode = re.sub('^(@.+?\s)+','',tweet.full_text)
-
-        basiccode = unidecode(basiccode)
-
-        #unescape >, <, and &
-        basiccode = basiccode.replace("&lt;", "<")
-        basiccode = basiccode.replace("&gt;", ">")
-        basiccode = basiccode.replace("&amp;", "&")
-
-#determine language:
-
-        #look for Debug command
-        exp = "{\w*?D\w*(?:}|\s)" # {B\d\d  B= Begin
-        result = re.search(exp,basiccode)
-        if result:  
-            debug=True
-        else:
-            debug = False
-
-        #look for start time command
-        exp = "{\w*?B(\d\d?)\w*(?:}|\s)" # {B\d\d  B= Begin
-        result = re.search(exp,basiccode)
-        if result:  
-            starttime = int(result.group(1))
-            logger.info(f" Requests start at {starttime} seconds")
-        else:
-            starttime = 2
-
-        #look for length of time to record command
-        exp = "{\w*?S(\d\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
-        result=re.search(exp,basiccode)
-        if result:
-            recordtime = int(result.group(1))
-            logger.info(f" Requests record for {recordtime} seconds")
-        else:
-            recordtime = 20
-        if recordtime <1:
-            recordtime=1
-        if recordtime >30:
-            recordtime=30
+        #if there is an url in text, pass the firs
+        if tweet.entities.urls:
+            url=tweet.entities.urls[0].expanded_url
             
-        language = 0 # default to BASIC
-
-        exp = "{\w*?A\w*(?:}|\s)" #{A
-        if re.search(exp,basiccode): 
-            language=2 #it's Assembly
-            logger.info("it's ASM")
-
-            basiccode = "ORG $8000\n" + basiccode
-
-        #remove any { command
-        #exp = "{\w*(?:}|\s)" #{anything till space or }
-        exp = "{\w*(?:}\s*)" #{anything till } plus trailing whitespace
-        basiccode = re.sub(exp,'',basiccode)
-
-        #whitespace
-        basiccode = basiccode.strip()
-
-        #halt if string is empty
-        if not basiccode:
-            logger.info("!!! basiccode string is empty, SKIPPING")
+        config=determine_config(tweet.full_text, url)
+        
+        if config.error:
+            logger.info(config.error)
             continue
-
+        
+        language  = config.language
+        starttime = config.starttime
+        basiccode = config.basiccode
+        
         if language>0: #not BASIC
             basiccode=basiccode + "\n"
             outputFile = open('working/AUTORUN.BAS','w',encoding='latin')
@@ -129,7 +161,7 @@ def check_mentions(api, since_id):
         time.sleep(starttime)
 
         logger.info("Recording with ffmpeg")
-        result = os.system(f'ffmpeg -y -hide_banner -loglevel warning -f x11grab -r 30 -video_size 672x440 -i :99 -q:v 0 -pix_fmt yuv422p -t {recordtime} working/OUTPUT_BIG.mp4')
+        result = os.system(f'ffmpeg -y -hide_banner -loglevel warning -f x11grab -r 30 -video_size 672x440 -i :99 -q:v 0 -pix_fmt yuv422p -t {config.recordtime} working/OUTPUT_BIG.mp4')
 
         logger.info("Stopping emulator")
         emuPid.kill()

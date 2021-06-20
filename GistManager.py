@@ -4,10 +4,13 @@ import sys
 def getGist(gistUrl):
     if not "https://gist.githubusercontent.com" in gistUrl:
         return "Error: Not a valid URL"
-    response = urllib2.urlopen(gistUrl)
-    data = response.read()
+    try:
+        response = urllib2.urlopen(gistUrl)
+        data = response.read()
+    except URLError, e:
+        return "Error: "+e.reason
     if len(data) > 2000:
-        return "Error, only 2k of code is allowed"
+        return "Error: only 2k of code is allowed"
     return data
     
 if __name__ == "__main__":
