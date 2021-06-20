@@ -116,7 +116,7 @@ def check_mentions(api, since_id):
             logger.error("Not a valid BASIC program")
             logger.error(result)
             if debug:
-                reply_tweet(api, tweet, result)
+                reply_tweet(api, tweet, result[:280])
             continue
 
         logger.info("Firing up emulator")
