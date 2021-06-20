@@ -20,7 +20,7 @@ def determine_config(full_text, gistUrl):
     config['error']=None
     
     #remove all @ mentions, leaving just the BASIC code
-    basiccode = re.sub('^(@.+?\s)+','',full_text)
+    basiccode = re.sub('^(@.+?\s)+','',full_text, re.ASCII)
 
     basiccode = unidecode(basiccode)
 
@@ -37,7 +37,7 @@ def determine_config(full_text, gistUrl):
             config['error']=text
             return config
         else:
-            basicode = text 
+            basicode = unidecode(text) 
 
     #determine language:
 
@@ -82,7 +82,7 @@ def determine_config(full_text, gistUrl):
 
     #remove any { command
     #exp = "{\w*(?:}|\s)" #{anything till space or }
-    exp = "{\w*(?:}\s*$)" #{anything till } plus trailing whitespace
+    exp = "{\w*(?:}\s*)" #{anything till } plus trailing whitespace
     basiccode = re.sub(exp,'',basiccode)
 
     #whitespace

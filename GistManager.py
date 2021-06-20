@@ -13,5 +13,5 @@ def getGist(gistUrl):
         return "Error: "+e.reason
     if len(data) > 2000:
         return "Error: only 2k of code is allowed"
-    return str(data.decode())
+    return data.decode('utf8')
 
