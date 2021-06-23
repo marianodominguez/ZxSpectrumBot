@@ -34,7 +34,7 @@ def determine_config(full_text, gistUrl):
             config['error']=text
             return config
         else:
-            basicode = unidecode(text)
+            basiccode = unidecode(text)
     #look for Debug command
     exp = "{\w*?D\w*(?:}|\s)" # {B\d\d  D= debug
     result = re.search(exp,basiccode)
@@ -81,7 +81,7 @@ def determine_config(full_text, gistUrl):
 
     #whitespace
     basiccode = basiccode.strip()
-    logger.info(f"Code: [{basicode}]")
+    logger.info(f"Code: [{basiccode}]")
     
     #halt if string is empty
     if not basiccode:
