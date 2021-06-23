@@ -12,8 +12,8 @@ def getGist(gistUrl):
         data = response.read()
     except urllib2.URLError as e:
         return "Error: "+e.reason
-    if len(data) > 2000:
-        return "Error: only 2k of code is allowed"
+    if len(data) > 5000:
+        return "Error: only 5k of code is allowed"
     return data.decode('utf8')
 
 if __name__ == "__main__":
