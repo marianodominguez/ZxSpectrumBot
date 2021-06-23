@@ -4,7 +4,7 @@ import time
 import os,sys
 import subprocess
 
-def run_emulator(logger, api, language, recordtime, starttime):
+def run_emulator(logger, api, tweet, language, recordtime, starttime):
     logger.info("Firing up emulator")
     if language==0 or language==2: #BASIC or ASM
         cmd = '/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()

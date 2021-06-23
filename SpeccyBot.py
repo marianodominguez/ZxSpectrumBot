@@ -81,7 +81,7 @@ def determine_config(full_text, gistUrl):
 
     #whitespace
     basiccode = basiccode.strip()
-    logger.info(f"Code: [{basiccode}]")
+    logger.debug(f"Code: [{basiccode}]")
     
     #halt if string is empty
     if not basiccode:
@@ -120,8 +120,6 @@ def check_mentions(api, since_id):
         recordtime  = config['recordtime']
         debug       = config['debug']
         
-        logger.info(basiccode)
-        
         if language>0: #not BASIC
             basiccode=basiccode + "\n"
             outputFile = open('working/AUTORUN.BAS','w',encoding='latin')
@@ -154,7 +152,7 @@ def check_mentions(api, since_id):
             if debug:
                 reply_tweet(api, tweet, result[:280])
             continue
-        Emulator.run_emulator(logger, api, language, recordtime, starttime)
+        Emulator.run_emulator(logger, api, tweet, language, recordtime, starttime)
 
         logger.info("Done!")
     return new_since_id
