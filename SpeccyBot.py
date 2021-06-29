@@ -11,6 +11,7 @@ from datetime import datetime
 from unidecode import unidecode
 import re
 import GistManager
+import TwitterUtil
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -138,6 +139,9 @@ def check_mentions(api, since_id):
             asmResult = os.popen('z80asm working/AUTORUN.BAS -o working/run.bin 2>&1').read()
             if "error: " in asmResult:
                 logger.error("assembler code not valid")
+                logger.error(result)
+                if debug:
+                    TwitterUtil.reply_tweet(api, tweet, asmResult[:280])
                 continue
             logger.info("Making disk image, moving text ASM")
             result = os.popen('bin2tap working/run.bin working/tape.tap 2>&1').read()
@@ -150,22 +154,12 @@ def check_mentions(api, since_id):
             logger.error("Not a valid BASIC program")
             logger.error(result)
             if debug:
-                reply_tweet(api, tweet, result[:280])
+                TwitterUtil.reply_tweet(api, tweet, result[:280])
             continue
         Emulator.run_emulator(logger, api, tweet, language, recordtime, starttime)
 
         logger.info("Done!")
     return new_since_id
-
-def reply_tweet(api, tweet, text):
-    msg=" "
-    for line in text.split("\n"):
-        if "ERROR"  in line:
-            msg=msg+line+"\n"
-    
-    tweettext = f"@{tweet.user.screen_name} \n {msg}"
-    logger.info(f"MSG: {tweettext}")
-    api.update_status(auto_populate_reply_metadata=False, status=tweettext.strip(), in_reply_to_status_id=tweet.id)
 
 def main():
     os.chdir('/home/zxspectrum/bot/')
