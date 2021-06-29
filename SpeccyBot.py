@@ -133,6 +133,12 @@ def check_mentions(api, since_id):
         if language==0: #BASIC
             logger.info("Making disk image, moving tokenized BASIC")
             result = os.popen('bas2tap working/AUTORUN.BAS -a working/tape.tap 2>&1').read()
+            if "ERROR" in result:
+                logger.error("Not a valid BASIC program")
+                logger.error(result)
+                if debug:
+                    TwitterUtil.reply_tweet(api, tweet, result[:280])
+            continue
 
         elif language==2: #ASM
             #todo run assembler code and use bin2tap
@@ -150,12 +156,6 @@ def check_mentions(api, since_id):
             logger.error("Yikes! Langauge not valid")
             continue
 
-        if "ERROR" in result:
-            logger.error("Not a valid BASIC program")
-            logger.error(result)
-            if debug:
-                TwitterUtil.reply_tweet(api, tweet, result[:280])
-            continue
         Emulator.run_emulator(logger, api, tweet, language, recordtime, starttime)
 
         logger.info("Done!")
