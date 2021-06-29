@@ -145,7 +145,7 @@ def check_mentions(api, since_id):
             asmResult = os.popen('z80asm working/AUTORUN.BAS -o working/run.bin 2>&1').read()
             if "error: " in asmResult:
                 logger.error("assembler code not valid")
-                logger.error(result)
+                logger.error(asmResult)
                 if debug:
                     TwitterUtil.reply_tweet(api, tweet, asmResult[:280])
                 continue
