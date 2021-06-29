@@ -5,7 +5,7 @@ def reply_tweet(api, tweet, text):
     logger = logging.getLogger()
     msg=" "
     for line in text.split("\n"):
-        if "ERROR"  in line:
+        if "ERROR"  in line or "error:" in line:
             msg=msg+line+"\n"
     
     tweettext = f"@{tweet.user.screen_name} \n {msg}"
