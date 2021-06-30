@@ -11,7 +11,7 @@ Dependencies. So many dependencies:
 - A Twitter account, and API keys for it https://developer.twitter.com/en/products/twitter-api
 - Tweepy. Specifically the fork that allows video uploads. https://github.com/tweepy/tweepy/pull/1414 They plan on folding that feature into the main program but as of this writing, haven't.
 - zxspectrum emulator fuse: fuse-emulator-common spectrum-roms fuse-emulator-utils
-- Spectrum Basic parser (TBD)
+- Spectrum Basic parser bas2tap, standard sinclair basic
 - zmakebas: utility to create tap files https://github.com/z00m128/zmakebas
 - ffmpeg, for processing video files: https://ffmpeg.org
 - Tapes: 
