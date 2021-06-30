@@ -11,7 +11,6 @@ from datetime import datetime
 from unidecode import unidecode
 import re
 import GistManager
-import TwitterUtil
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -72,7 +71,6 @@ def determine_config(full_text, gistUrl):
     if re.search(exp,basiccode): 
         language=2 #it's Assembly
         logger.info("it's ASM")
-
         basiccode = "ORG $8000\n" + basiccode
 
     #remove any { command
@@ -120,44 +118,11 @@ def check_mentions(api, since_id):
         basiccode   = config['basiccode']
         recordtime  = config['recordtime']
         debug       = config['debug']
-        
-        if language>0: #not BASIC
-            basiccode=basiccode + "\n"
-            outputFile = open('working/AUTORUN.BAS','w',encoding='latin')
-        else:
-            outputFile = open('working/AUTORUN.BAS','w')
 
-        outputFile.write(basiccode)
-        outputFile.close()
-
-        if language==0: #BASIC
-            logger.info("Making disk image, moving tokenized BASIC")
-            result = os.popen('bas2tap working/AUTORUN.BAS -a working/tape.tap 2>&1').read()
-            if "ERROR" in result:
-                logger.error("Not a valid BASIC program")
-                logger.error(result)
-                if debug:
-                    TwitterUtil.reply_tweet(api, tweet, result[:280])
-                continue
-
-        elif language==2: #ASM
-            #todo run assembler code and use bin2tap
-            asmResult = os.popen('z80asm working/AUTORUN.BAS -o working/run.bin 2>&1').read()
-            if "error: " in asmResult:
-                logger.error("assembler code not valid")
-                logger.error(asmResult)
-                if debug:
-                    TwitterUtil.reply_tweet(api, tweet, asmResult[:280])
-                continue
-            logger.info("Making disk image, moving text ASM")
-            result = os.popen('bin2tap working/run.bin working/tape.tap 2>&1').read()
-
-        else:
-            logger.error("Yikes! Langauge not valid")
+        error=Emulator.compile(language, api, tweet, debug)
+        if error:
             continue
-
-        Emulator.run_emulator(logger, api, tweet, language, recordtime, starttime)
-
+        Emulator.run_emulator(api, tweet, language, recordtime, starttime)
         logger.info("Done!")
     return new_since_id
 
@@ -182,22 +147,18 @@ def main():
     sinceFile.close()       
     since_id = int(since_id)
     logger.info(f"Starting since_id {since_id}")
-    
     os.environ["DISPLAY"] = ":99"
 
     while True:
         didatweet=0
         new_since_id = check_mentions(api, since_id)
-
         if new_since_id != since_id:
             since_id = new_since_id
-            logger.info(f"Since_id now {since_id}")
-        
+            logger.info(f"Since_id now {since_id}")     
             sinceFile = open('sinceFile.txt','w')
             sinceFile.write(str(since_id))
             sinceFile.close()
             didatweet=1
-
         if didatweet==0:
             logger.info("Waiting...")
             time.sleep(120)
