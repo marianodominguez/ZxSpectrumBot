@@ -138,7 +138,7 @@ def check_mentions(api, since_id):
                 logger.error(result)
                 if debug:
                     TwitterUtil.reply_tweet(api, tweet, result[:280])
-            continue
+                continue
 
         elif language==2: #ASM
             #todo run assembler code and use bin2tap
