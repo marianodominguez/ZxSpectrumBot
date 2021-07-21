@@ -106,7 +106,8 @@ def check_mentions(api, since_id):
         #if there is an url in text, pass the firs
         if tweet.entities['urls']:
             url=tweet.entities['urls'][0]['expanded_url']
-            
+        if not GistManager.validate(url):
+            url=None
         config=determine_config(tweet.full_text, url)
         
         if config['error']:

@@ -4,8 +4,12 @@ import urllib
 from unidecode import unidecode
 import re
 
+
+def validate(url):
+    return "https://gist.githubusercontent.com" in url
+
 def getGist(gistUrl):
-    if not "https://gist.githubusercontent.com" in gistUrl:
+    if not validate(gistUrl):
         return "Error: Not a valid URL"
     try:
         response = urllib2.urlopen(gistUrl)
