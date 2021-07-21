@@ -120,7 +120,7 @@ def check_mentions(api, since_id):
         recordtime  = config['recordtime']
         debug       = config['debug']
 
-        error=Emulator.compile(language, api, tweet, debug)
+        error=Emulator.compile(language, api, tweet, debug, basiccode)
         if error:
             continue
         Emulator.run_emulator(api, tweet, language, recordtime, starttime)
