@@ -5,7 +5,7 @@ import os,sys
 import subprocess
 import TwitterUtil
 
-def compile(language, api, tweet, debug):
+def compile(language, api, tweet, debug, basiccode):
     logger = logging.getLogger()
     if language>0: #not BASIC
         basiccode=basiccode + "\n"
