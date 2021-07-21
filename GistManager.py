@@ -6,7 +6,7 @@ import re
 
 
 def validate(url):
-    return "https://gist.githubusercontent.com" in url
+    return url and "https://gist.githubusercontent.com" in url
 
 def getGist(gistUrl):
     if not validate(gistUrl):
