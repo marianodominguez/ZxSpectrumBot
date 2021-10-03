@@ -53,7 +53,7 @@ def determine_config(full_text, gistUrl):
         starttime = 2
 
     #look for length of time to record command
-    exp = "{\w*?S(\d\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
+    exp = "{\w*?S(\d\d?\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
     result=re.search(exp,basiccode)
     if result:
         recordtime = int(result.group(1))
@@ -62,8 +62,8 @@ def determine_config(full_text, gistUrl):
         recordtime = 20
     if recordtime <1:
         recordtime=1
-    if recordtime >30:
-        recordtime=30
+    if recordtime >140:
+        recordtime=140
         
     language = 0 # default to BASIC
 
