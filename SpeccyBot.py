@@ -72,6 +72,11 @@ def determine_config(full_text, gistUrl):
         language=2 #it's Assembly
         logger.info("it's ASM")
         basiccode = "ORG $8000\n" + basiccode
+    
+    exp = "{\w*?Z\w*(?:}|\s)" #{A
+    if re.search(exp,basiccode): 
+        language=3 #it's ZX basic
+        logger.info("it's ZX basic")
 
     #remove any { command
     #exp = "{\w*(?:}|\s)" #{anything till space or }

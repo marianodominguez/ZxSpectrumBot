@@ -17,10 +17,20 @@ def compile(language, api, tweet, debug, basiccode):
     outputFile.close()
 
     if language==0: #BASIC
-        logger.info("Making disk image, moving tokenized BASIC")
+        logger.info("Making tape image, moving tokenized BASIC")
         result = os.popen('bas2tap working/AUTORUN -a working/tape.tap 2>&1').read()
         if "ERROR" in result:
             logger.error("Not a valid BASIC program")
+            logger.error(result)
+            if debug:
+                TwitterUtil.reply_tweet(api, tweet, result[:280])
+            return 1
+
+    elif language==3: #ZX BASIC
+        logger.info("Making tape image BASIC")
+        result = os.popen('zxbasic/zxbc.py -taB working/AUTORUN -o working/tape.tap 2>&1').read()
+        if "error:" in result:
+            logger.error("Not a valid ZX BASIC program")
             logger.error(result)
             if debug:
                 TwitterUtil.reply_tweet(api, tweet, result[:280])
