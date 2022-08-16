@@ -61,9 +61,9 @@ def determine_config(full_text, gistUrl):
     else:
         recordtime = 20
     if recordtime <1:
-        recordtime=1
-    if recordtime >140:
-        recordtime=140
+        recordtime=10
+    if recordtime >30:
+        recordtime=30
         
     language = 0 # default to BASIC
 
