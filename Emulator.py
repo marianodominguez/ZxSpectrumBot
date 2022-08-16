@@ -15,6 +15,7 @@ def compile(language, api, tweet, debug, basiccode):
 
     outputFile.write(basiccode)
     outputFile.close()
+    os.remove("working/tape.tap") 
 
     if language==0: #BASIC
         logger.info("Making tape image, moving tokenized BASIC")
