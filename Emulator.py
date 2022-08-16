@@ -28,7 +28,7 @@ def compile(language, api, tweet, debug, basiccode):
 
     elif language==3: #ZX BASIC
         logger.info("Making tape image BASIC")
-        result = os.popen('zxbasic/zxbc.py -taB working/AUTORUN -o working/tape.tap 2>&1').read()
+        result = os.popen('zxbasic/zxbc.py -taB -o working/tape.tap working/AUTORUN 2>&1').read()
         if "error:" in result:
             logger.error("Not a valid ZX BASIC program")
             logger.error(result)
