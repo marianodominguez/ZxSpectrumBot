@@ -55,8 +55,8 @@ def compile(language, api, tweet, debug, basiccode):
 def run_emulator(api, tweet, language, recordtime, starttime):
     logger = logging.getLogger()
     logger.info("Firing up emulator")
-    if language==0 or language==2: #BASIC or ASM
-        cmd = '/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
+    
+    cmd = '/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
 
     emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
     logger.info(f"   Process ID {emuPid.pid}")
