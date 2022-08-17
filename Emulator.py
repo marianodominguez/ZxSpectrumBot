@@ -15,7 +15,9 @@ def compile(language, api, tweet, debug, basiccode):
 
     outputFile.write(basiccode)
     outputFile.close()
-    os.remove("working/tape.tap") 
+    
+    if os.path.exists("working/tape.tap"):
+        os.remove("working/tape.tap") 
 
     if language==0: #BASIC
         logger.info("Making tape image, moving tokenized BASIC")
@@ -56,6 +58,9 @@ def compile(language, api, tweet, debug, basiccode):
 def run_emulator(api, tweet, language, recordtime, starttime):
     logger = logging.getLogger()
     logger.info("Firing up emulator")
+    if not os.path.exists("working/tape.tap"):
+        logger.error("no program to run")
+        return
     
     cmd = '/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
 
