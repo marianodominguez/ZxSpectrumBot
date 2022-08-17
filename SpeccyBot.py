@@ -18,7 +18,6 @@ logger = logging.getLogger()
 def determine_config(full_text, gistUrl):
     config={}
     config['error']=None
-    config['speed']=1
     #remove all @ mentions, leaving just the BASIC code
     basiccode = re.sub('(@.+?\s)+','',full_text, re.ASCII)
     basiccode = unidecode(basiccode)
@@ -106,6 +105,7 @@ def determine_config(full_text, gistUrl):
     config['recordtime'] =recordtime
     config['language']   =language
     config['basiccode']  =basiccode
+    config['speed']      =speed
     return config
 
 def check_mentions(api, since_id):
