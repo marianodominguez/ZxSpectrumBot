@@ -66,6 +66,7 @@ def determine_config(full_text, gistUrl):
         recordtime=30
         
     exp = "{\w*?X(\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-5
+    speed=1
     result=re.search(exp,basiccode)
     if result:
         speed = int(result.group(1))
