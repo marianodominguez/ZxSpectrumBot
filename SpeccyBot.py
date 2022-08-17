@@ -18,8 +18,9 @@ logger = logging.getLogger()
 def determine_config(full_text, gistUrl):
     config={}
     config['error']=None
+    config['speed']=1
     #remove all @ mentions, leaving just the BASIC code
-    basiccode = re.sub('^(@.+?\s)+','',full_text, re.ASCII)
+    basiccode = re.sub('(@.+?\s)+','',full_text, re.ASCII)
     basiccode = unidecode(basiccode)
     #unescape >, <, and &
     basiccode = basiccode.replace("&lt;", "<")
@@ -36,7 +37,7 @@ def determine_config(full_text, gistUrl):
         else:
             basiccode = unidecode(text)
     #look for Debug command
-    exp = "{\w*?D\w*(?:}|\s)" # {B\d\d  D= debug
+    exp = "{\w*?D\w*(?:}|\s)" # {D\d\d  D= debug
     result = re.search(exp,basiccode)
     if result:  
         config['debug'] = True
@@ -65,6 +66,14 @@ def determine_config(full_text, gistUrl):
     if recordtime >30:
         recordtime=30
         
+    exp = "{\w*?X(\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-5
+    result=re.search(exp,basiccode)
+    if result:
+        speed = int(result.group(1))
+        logger.info(f" Accelerate {speed*100} %")
+    if speed>5: speed=5
+    if speed<1: speed=1
+    
     language = 0 # default to BASIC
 
     exp = "{\w*?A\w*(?:}|\s)" #{A
@@ -73,7 +82,7 @@ def determine_config(full_text, gistUrl):
         logger.info("it's ASM")
         basiccode = "ORG $8000\n" + basiccode
     
-    exp = "{\w*?Z\w*(?:}|\s)" #{A
+    exp = "{\w*?Z\w*(?:}|\s)" #{Z
     if re.search(exp,basiccode): 
         language=3 #it's ZX basic
         logger.info("it's ZX basic")
@@ -118,17 +127,11 @@ def check_mentions(api, since_id):
         if config['error']:
             logger.info(config['error'])
             continue
-        
-        language    = config['language']
-        starttime   = config['starttime']
-        basiccode   = config['basiccode']
-        recordtime  = config['recordtime']
-        debug       = config['debug']
 
-        error=Emulator.compile(language, api, tweet, debug, basiccode)
+        error=Emulator.compile(api, tweet, config)
         if error:
             continue
-        Emulator.run_emulator(api, tweet, language, recordtime, starttime)
+        Emulator.run_emulator(api, tweet, config)
         logger.info("Done!")
     return new_since_id
 

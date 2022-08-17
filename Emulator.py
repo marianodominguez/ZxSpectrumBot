@@ -5,7 +5,12 @@ import os,sys
 import subprocess
 import TwitterUtil
 
-def compile(language, api, tweet, debug, basiccode):
+def compile(api, tweet, config):
+    
+    language    = config['language']
+    basiccode   = config['basiccode']
+    debug       = config['debug']
+    
     logger = logging.getLogger()
     if language>0: #not BASIC
         basiccode=basiccode + "\n"
@@ -55,14 +60,19 @@ def compile(language, api, tweet, debug, basiccode):
         logger.error("Yikes! Langauge not valid")
         return 1
 
-def run_emulator(api, tweet, language, recordtime, starttime):
+def run_emulator(api, tweet, config):
+    
+    starttime   = config['starttime']
+    recordtime  = config['recordtime']
+    speed       = config['speed']
+    
     logger = logging.getLogger()
     logger.info("Firing up emulator")
     if not os.path.exists("working/tape.tap"):
         logger.error("no program to run")
         return
     
-    cmd = '/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
+    cmd = f'/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
 
     emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
     logger.info(f"   Process ID {emuPid.pid}")
