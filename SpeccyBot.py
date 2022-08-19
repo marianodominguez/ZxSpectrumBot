@@ -65,7 +65,7 @@ def determine_config(full_text, gistUrl):
     if recordtime >30:
         recordtime=30
         
-    exp = "{\w*?X(\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-5
+    exp = "{\w*?X(\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-20
     speed=1
     result=re.search(exp,basiccode)
     if result:
@@ -87,6 +87,13 @@ def determine_config(full_text, gistUrl):
         language=3 #it's ZX basic
         logger.info("it's ZX basic")
 
+    movies=0
+    exp = "{\w*?M\w*(?:}|\s)" #{Z
+    if re.search(exp,basiccode): 
+        movies=1 
+        logger.info("Using new movie support")
+
+
     #remove any { command
     #exp = "{\w*(?:}|\s)" #{anything till space or }
     exp = "{\w*(?:}\s*)" #{anything till } plus trailing whitespace
@@ -107,6 +114,7 @@ def determine_config(full_text, gistUrl):
     config['language']   =language
     config['basiccode']  =basiccode
     config['speed']      =speed
+    config['movie_support'] =movies
     return config
 
 def check_mentions(api, since_id):
