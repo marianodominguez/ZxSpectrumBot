@@ -26,13 +26,15 @@ def compile(api, tweet, config):
 
     if language==0: #BASIC
         logger.info("Making tape image, moving tokenized BASIC")
-        result = os.popen('bas2tap working/AUTORUN -a working/tape.tap 2>&1').read()
+        result = os.popen('bas2tap working/AUTORUN -a working/dummy.tap 2>&1').read()
         if "ERROR" in result:
             logger.error("Not a valid BASIC program")
             logger.error(result)
             if debug:
                 TwitterUtil.reply_tweet(api, tweet, result[:280])
             return 1
+        os.popen('zmakebas -a 0 -o working/tape.tap working/AUTORUN  2>&1').read()
+
 
     elif language==3: #ZX BASIC
         logger.info("Making tape image BASIC")
