@@ -90,7 +90,7 @@ def run_emulator(api, tweet, config):
         logger.debug(result)
 
     else:
-        cmd = f'/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
+        cmd = f'/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --tape working/tape.tap'.split()
 
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
         logger.info(f"   Process ID {emuPid.pid}")
