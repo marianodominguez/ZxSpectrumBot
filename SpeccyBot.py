@@ -53,7 +53,7 @@ def determine_config(full_text, gistUrl):
         starttime = 2
 
     #look for length of time to record command
-    exp = "{\w*?S(\d\d?\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
+    exp = "{\w*?S(\d\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
     result=re.search(exp,basiccode)
     if result:
         recordtime = int(result.group(1))
@@ -61,9 +61,7 @@ def determine_config(full_text, gistUrl):
     else:
         recordtime = 20
     if recordtime <1:
-        recordtime=10
-    if recordtime >30:
-        recordtime=30
+        recordtime=1
         
     exp = "{\w*?X(\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-20
     speed=1

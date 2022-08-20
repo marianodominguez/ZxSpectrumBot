@@ -79,13 +79,16 @@ def run_emulator(api, tweet, config):
         return
     
     if movie_support:
-        cmd = f'/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start working/movie.fmf --rate 2 --sound-freq 44100  --separation ACB --tape working/tape.tap'.split()
+        cmd = f'/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start working/movie.fmf --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
         time.sleep(starttime)
         
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
         emuPid.kill()
         
         result = os.system('fmfconv working/movie.fmf | ffmpeg -loglevel warning -y -i -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -strict experimental -r 30 -t 2:20 -acodec aac -vb 1024k -minrate 1024k -maxrate 1024k -bufsize 1024k -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
+
+        logger.debug(result)
+
     else:
         cmd = f'/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --no-sound --tape working/tape.tap'.split()
 
@@ -96,7 +99,7 @@ def run_emulator(api, tweet, config):
 
         logger.info("Recording with ffmpeg")
         result = os.system(f'ffmpeg -y -hide_banner -loglevel warning -f x11grab -r 30 -video_size 672x440 -i :99 -q:v 0 -pix_fmt yuv422p -t {recordtime} working/OUTPUT_BIG.mp4')
-
+        logger.debug(result)
         logger.info("Stopping emulator")
         emuPid.kill()
 
