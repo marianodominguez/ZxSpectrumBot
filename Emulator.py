@@ -79,7 +79,7 @@ def run_emulator(api, tweet, config):
         return
     
     if movie_support:
-        cmd = f'/usr/bin/fuse --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start movie.fmf --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
+        cmd = f'/usr/bin/fuse --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start working/movie.fmf --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
         time.sleep(starttime)
         
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
