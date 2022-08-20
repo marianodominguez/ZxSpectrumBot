@@ -109,7 +109,7 @@ def run_emulator(api, tweet, config):
 
     logger.info("Uploading video")  
 
-    media = api.chunked_upload("working/OUTPUT_SMALL.mp4",file_type='video/mp4', media_category='tweet_video')
+    media = api.media_upload("working/OUTPUT_SMALL.mp4")
 
     logger.info(f"Media ID is {media.media_id}")
 
