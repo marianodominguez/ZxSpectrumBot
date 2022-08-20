@@ -85,11 +85,11 @@ def determine_config(full_text, gistUrl):
         language=3 #it's ZX basic
         logger.info("it's ZX basic")
 
-    movies=0
-    exp = "{\w*?M\w*(?:}|\s)" #{Z
+    movies=1
+    exp = "{\w*?M\w*(?:}|\s)" #{M for mute
     if re.search(exp,basiccode): 
-        movies=1 
-        logger.info("Using new movie support")
+        movies=0 
+        logger.info("Muting audio channel, disabled fmf")
 
 
     #remove any { command
