@@ -84,7 +84,7 @@ def run_emulator(api, tweet, config):
         env=os.environ.copy()
         env["DISPLAY"]=":99"
         env["SDL_AUDIODRIVER"]='dummy'
-        env['bufsize']=100
+        env['bufsize']='100'
         logger.info(f"command: {cmd}, env: {env}")
         emuPid = subprocess.Popen(cmd, env=env)
 
