@@ -84,7 +84,7 @@ def run_emulator(api, tweet, config):
         env=os.environ.copy()
         env["DISPLAY"]=":99"
         env["SDL_AUDIODRIVER"]='dummy'
-        emuPid = subprocess.Popen(cmd, env)
+        emuPid = subprocess.Popen(cmd, env=env)
 
         emuPid.kill()
         
