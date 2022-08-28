@@ -86,7 +86,7 @@ def run_emulator(api, tweet, config):
         env["SDL_AUDIODRIVER"]='dummy'
         env['bufsize']='100'
         logger.info(f"command: {cmd}, env: {env}")
-        emuPid = subprocess.Popen(cmd, env=env)
+        emuPid = subprocess.Popen(cmd, env=env, shell=True)
 
         emuPid.kill()
         
