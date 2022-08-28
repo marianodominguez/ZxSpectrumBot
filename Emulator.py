@@ -83,7 +83,7 @@ def run_emulator(api, tweet, config):
         
         env={}
         env["DISPLAY"]=":99"
-        env["SDL_AUDIODRIVER"]='dummy'
+        env["SDL_AUDIODRIVER"]='pulseaudio'
         logger.info(f"command: {cmd}, env: {env}")
         emuPid = subprocess.Popen(cmd, env=env)
         time.sleep(starttime+recordtime)
@@ -100,7 +100,7 @@ def run_emulator(api, tweet, config):
     else:
         cmd = f'/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --tape working/tape.tap'.split()
 
-        emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "pulseaudio"})
+        emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
         logger.info(f"   Process ID {emuPid.pid}")
 
         time.sleep(starttime)
