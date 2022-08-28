@@ -83,7 +83,7 @@ def run_emulator(api, tweet, config):
         
         env={}
         env["DISPLAY"]=":99"
-        env["SDL_AUDIODRIVER"]='pulseaudio'
+        env["SDL_AUDIODRIVER"]='dummy'
         logger.info(f"command: {cmd}, env: {env}")
         emuPid = subprocess.Popen(cmd, env=env)
         time.sleep(starttime+recordtime)
