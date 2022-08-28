@@ -91,7 +91,8 @@ def run_emulator(api, tweet, config):
         emuPid.kill()
         #outs, errs = emuPid.communicate()
         #logger.info(f"out: {outs}\n err: {errs}")     
-        #    
+        # 
+        logger.info("converting fmf")
         result = os.system('fmfconv working/movie.fmf | ffmpeg -loglevel warning -y -i - -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -strict experimental -r 30 -t 2:20 -acodec aac -vb 1024k -minrate 1024k -maxrate 1024k -bufsize 1024k -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
 
         logger.debug(result)
