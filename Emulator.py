@@ -86,6 +86,8 @@ def run_emulator(api, tweet, config):
         env["SDL_AUDIODRIVER"]='dummy'
         logger.info(f"command: {cmd}, env: {env}")
         emuPid = subprocess.Popen(cmd, env=env, shell=True)
+        outs, errs = emuPid.communicate(timeout=15)
+        logger.info(f"out: {outs}\n err: {errs}")
 
         emuPid.kill()
         
