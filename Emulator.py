@@ -75,9 +75,9 @@ def run_emulator(api, tweet, config):
         logger.error("no program to run")
         return
     
-    rom="--rom-48"
+    rom="--machine 48"
     if config['128mode']==1:
-        rom="--rom-128-1"
+        rom="--machine 128"
     
     if movie_support:
         cmd = f'/usr/bin/fuse-sdl {rom} --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start ''working/movie.fmf'' --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
