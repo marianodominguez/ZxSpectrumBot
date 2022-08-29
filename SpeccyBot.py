@@ -50,7 +50,7 @@ def determine_config(full_text, gistUrl):
         starttime = int(result.group(1))
         logger.info(f" Requests start at {starttime} seconds")
     else:
-        starttime = 2
+        starttime = 0
 
     #look for length of time to record command
     exp = "{\w*?S(\d\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
