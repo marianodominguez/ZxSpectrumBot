@@ -91,7 +91,12 @@ def determine_config(full_text, gistUrl):
         movies=0
         logger.info("Muting audio channel")
 
-
+    mode128=0
+    exp = "{\w*?\+\w*(?:}|\s)" #{+ for 128 k mode
+    if re.search(exp,basiccode): 
+        mode128=1
+        logger.info("Using 128k mode")
+        
     #remove any { command
     #exp = "{\w*(?:}|\s)" #{anything till space or }
     exp = "{\w*(?:}\s*)" #{anything till } plus trailing whitespace
@@ -113,6 +118,7 @@ def determine_config(full_text, gistUrl):
     config['basiccode']  =basiccode
     config['speed']      =speed
     config['movie_support'] =movies
+    config['128mode']       =mode128
     return config
 
 def check_mentions(api, since_id):

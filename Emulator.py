@@ -75,8 +75,12 @@ def run_emulator(api, tweet, config):
         logger.error("no program to run")
         return
     
+    rom="--rom-48"
+    if config['128mode']==1:
+        rom="--rom-128-1"
+    
     if movie_support:
-        cmd = f'/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start ''working/movie.fmf'' --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
+        cmd = f'/usr/bin/fuse-sdl --fbmode 640 {rom} --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start ''working/movie.fmf'' --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
         
         env={}
         env["DISPLAY"]=":99"
@@ -96,7 +100,7 @@ def run_emulator(api, tweet, config):
 
     else:
         logger.info("using deprecated recording. to be removed")
-        cmd = f'/usr/bin/fuse-sdl --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --tape working/tape.tap'.split()
+        cmd = f'/usr/bin/fuse-sdl --fbmode 640 {rom} --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --tape working/tape.tap'.split()
 
         emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
         logger.info(f"   Process ID {emuPid.pid}")
