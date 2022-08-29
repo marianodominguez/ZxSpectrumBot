@@ -99,7 +99,7 @@ def determine_config(full_text, gistUrl):
         
     #remove any { command
     #exp = "{\w*(?:}|\s)" #{anything till space or }
-    exp = "{\w*(?:}\s*)" #{anything till } plus trailing whitespace
+    exp = "{[\w\+]*(?:}\s*)" #{anything till } plus trailing whitespace
     basiccode = re.sub(exp,'',basiccode)
 
     #whitespace
