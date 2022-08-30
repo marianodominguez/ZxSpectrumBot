@@ -85,12 +85,6 @@ def determine_config(full_text, gistUrl):
         language=3 #it's ZX basic
         logger.info("it's ZX basic")
 
-    movies=1
-    exp = "{\w*?M\w*(?:}|\s)" #{M for mute
-    if re.search(exp,basiccode): 
-        movies=0
-        logger.info("Muting audio channel")
-
     mode128=0
     exp = "{\w*?\+\w*(?:}|\s)" #{+ for 128 k mode
     if re.search(exp,basiccode): 
@@ -117,7 +111,6 @@ def determine_config(full_text, gistUrl):
     config['language']   =language
     config['basiccode']  =basiccode
     config['speed']      =speed
-    config['movie_support'] =movies
     config['128mode']       =mode128
     return config
 

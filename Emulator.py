@@ -22,8 +22,12 @@ def compile(api, tweet, config):
     outputFile.close()
     
     if os.path.exists("working/tape.tap"):
-        os.remove("working/tape.tap") 
-
+        os.remove("working/tape.tap")
+    if os.path.exists("working/movie.fmf"):
+        os.remove("working/movie.fmf")
+    if os.path.exists("working/OUTPUT_SMALL.mp4"):
+        os.remove("working/OUTPUT_SMALL.mp4") 
+     
     if language==0: #BASIC
         logger.info("Making tape image, moving tokenized BASIC")
         result = os.popen('bas2tap working/AUTORUN -a working/dummy.tap 2>&1').read()
@@ -67,7 +71,6 @@ def run_emulator(api, tweet, config):
     starttime   = config['starttime']
     recordtime  = config['recordtime']
     speed       = config['speed']
-    movie_support = config['movie_support']
     
     logger = logging.getLogger()
     logger.info("Firing up emulator")
@@ -79,53 +82,32 @@ def run_emulator(api, tweet, config):
     if config['128mode']==1:
         rom="--machine 128"
     
-    if movie_support:
-        cmd = f'/usr/bin/fuse-sdl {rom} --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start ''working/movie.fmf'' --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
-        
-        env={}
-        env["DISPLAY"]=":99"
-        env["SDL_AUDIODRIVER"]='dummy'
-        logger.info(f"command: {cmd}, env: {env}")
-        emuPid = subprocess.Popen(cmd, env=env)
-        time.sleep(starttime+recordtime)
-
-        emuPid.kill()
-        #outs, errs = emuPid.communicate()
-        #logger.info(f"out: {outs}\n err: {errs}")     
-        # 
+    cmd = f'/usr/bin/fuse-sdl {rom} --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start ''working/movie.fmf'' --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
+    
+    env={}
+    env["DISPLAY"]=":99"
+    env["SDL_AUDIODRIVER"]='dummy'
+    
+    logger.info(f"command: {cmd}, env: {env}")
+    emuPid = subprocess.Popen(cmd, env=env)
+    time.sleep(starttime+recordtime)
+    emuPid.kill()
+    
+    if os.path.exists("working/movie.fmf"):
         logger.info("converting fmf")
         result = os.system(f'fmfconv -C 0:00,0:{starttime} working/movie.fmf | ffmpeg -loglevel warning -y -i - -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -strict experimental -r 30 -t 2:20 -acodec aac -vb 1024k -minrate 1024k -maxrate 1024k -bufsize 1024k -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
-
         logger.debug(result)
-
     else:
-        logger.info("using deprecated recording. to be removed")
-        cmd = f'/usr/bin/fuse-sdl {rom} --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --tape working/tape.tap'.split()
+        logger.error("Emulator was unable to run, skipping video") 
+    
+    if os.path.exists("working/OUTPUT_SMALL.mp4"):
+        logger.info("Uploading video")  
+        media = api.media_upload("working/OUTPUT_SMALL.mp4", chunked=True, media_category='tweet_video')
+        logger.info(f"Media ID is {media.media_id}")
+        time.sleep(5)
 
-        emuPid = subprocess.Popen(cmd, env={"DISPLAY": ":99","SDL_AUDIODRIVER": "dummy"})
-        logger.info(f"   Process ID {emuPid.pid}")
-
-        time.sleep(starttime)
-
-        logger.info("Recording with ffmpeg")
-        result = os.system(f'ffmpeg -y -hide_banner -loglevel warning -f x11grab -r 30 -video_size 672x440 -i :99 -q:v 0 -pix_fmt yuv422p -t {recordtime} working/OUTPUT_BIG.mp4')
-        logger.debug(result)
-        logger.info("Stopping emulator")
-        emuPid.kill()
-
-        logger.info("Converting video")
-        result = os.system('ffmpeg -loglevel warning -y -i working/OUTPUT_BIG.mp4 -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -strict experimental -r 30 -t 2:20 -acodec aac -vb 1024k -minrate 1024k -maxrate 1024k -bufsize 1024k -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
-        #per https://gist.github.com/nikhan/26ddd9c4e99bbf209dd7#gistcomment-3232972
-
-    logger.info("Uploading video")  
-
-    media = api.media_upload("working/OUTPUT_SMALL.mp4", chunked=True, media_category='tweet_video')
-
-    logger.info(f"Media ID is {media.media_id}")
-
-    time.sleep(5)
-    #TODO replace with get_media_upload_status per https://github.com/tweepy/tweepy/pull/1414
-
-    logger.info(f"Posting tweet to @{tweet.user.screen_name}")
-    tweettext = f"@{tweet.user.screen_name} "
-    api.update_status(auto_populate_reply_metadata=False, status=tweettext, media_ids=[media.media_id], in_reply_to_status_id=tweet.id)
+        logger.info(f"Posting tweet to @{tweet.user.screen_name}")
+        tweettext = f"@{tweet.user.screen_name} "
+        api.update_status(auto_populate_reply_metadata=False, status=tweettext, media_ids=[media.media_id], in_reply_to_status_id=tweet.id)
+    else:
+        logger.error("No video to post")
