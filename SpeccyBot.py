@@ -61,7 +61,7 @@ def determine_config(full_text, gistUrl):
     else:
         recordtime = 20
     if recordtime <1:
-        recordtime=1
+        recordtime=20
         
     exp = "{\w*?X(\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-20
     speed=1
