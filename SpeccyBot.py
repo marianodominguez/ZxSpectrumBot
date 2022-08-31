@@ -45,15 +45,15 @@ def determine_config(full_text, gistUrl):
         else:
             basiccode = unidecode(text)
     #look for Debug command
-    exp = "{\w*?[Dd]\w*(?:}|\s)" # {D\d\d  D= debug
+    exp = "{.*[Dd].*}" # {D\d\d  D= debug
     result = re.search(exp,basiccode)
-    if result:  
+    if result:
         config['debug'] = True
     else:
         config['debug'] = False
 
     #look for start time command
-    exp = "{\w*?[Bb](\d\d?)\w*(?:}|\s)" # {B\d\d  B= Begin
+    exp = "{.*[Bb](\d\d?).*}" # {B\d\d  B= Begin
     result = re.search(exp,basiccode)
     if result:  
         starttime = int(result.group(1))
@@ -62,7 +62,7 @@ def determine_config(full_text, gistUrl):
         starttime = 0
 
     #look for length of time to record command
-    exp = "{\w*?[Ss](\d\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
+    exp = "{.*[Ss](\d\d?).*}" # {S\d\d  S= Seconds to record
     result=re.search(exp,basiccode)
     if result:
         recordtime = int(result.group(1))
@@ -73,7 +73,7 @@ def determine_config(full_text, gistUrl):
     if recordtime <=1:
         recordtime=5
         
-    exp = "{\w*?[Xx](\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-20
+    exp = "{.*[Xx](\d\d?\d?).*}" # {X\d\d  X= Xelerate speed 1-20
     speed=1
     result=re.search(exp,basiccode)
     if result:
@@ -84,26 +84,25 @@ def determine_config(full_text, gistUrl):
     
     language = 0 # default to BASIC
 
-    exp = "{\w*?[Aa]\w*(?:}|\s)" #{A
+    exp = "{.*[Aa].*}" #{A
     if re.search(exp,basiccode): 
         language=2 #it's Assembly
         logger.info("it's ASM")
         basiccode = "ORG $8000\n" + basiccode
     
-    exp = "{\w*?[Zz]\w*(?:}|\s)" #{Z
+    exp = "{.*[Zz].*}" #{Z
     if re.search(exp,basiccode): 
         language=3 #it's ZX basic
         logger.info("it's ZX basic")
 
     mode128=0
-    exp = "{\w*?\+\w*(?:}|\s)" #{+ for 128 k mode
+    exp = "{.*\+.*}" #{+ for 128 k mode
     if re.search(exp,basiccode): 
         mode128=1
         logger.info("Using 128k mode")
         
     #remove any { command
-    #exp = "{\w*(?:}|\s)" #{anything till space or }
-    exp = "{[\w\+]*(?:}\s*)" #{anything till } plus trailing whitespace
+    exp = "{.*}\s*" #{anything till } plus trailing whitespace
     basiccode = re.sub(exp,'',basiccode)
 
     #whitespace
