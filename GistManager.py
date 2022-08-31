@@ -6,11 +6,11 @@ import re
 
 
 def validate(url):
-    return url and "https://gist.githubusercontent.com" in url
+    return url and "gist" in url and "raw" in url
 
 def getGist(gistUrl):
     if not validate(gistUrl):
-        return "Error: Not a valid URL"
+        return "Error: Not a valid URL, only raw gists are allowed"
     try:
         response = urllib2.urlopen(gistUrl)
         data = response.read()

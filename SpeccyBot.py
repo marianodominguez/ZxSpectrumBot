@@ -68,10 +68,10 @@ def determine_config(full_text, gistUrl):
         recordtime = int(result.group(1))
         logger.info(f" Requests record for {recordtime} seconds")
     else:
-        recordtime = 20
+        recordtime = 30
         logger.info(f" default for {recordtime} seconds")
     if recordtime <=1:
-        recordtime=10
+        recordtime=5
         
     exp = "{\w*?[Xx](\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-20
     speed=1
