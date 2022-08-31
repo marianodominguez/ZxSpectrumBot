@@ -93,7 +93,7 @@ def run_emulator(api, tweet, config):
     
     logger.info(f"waiting for {starttime+recordtime} seconds")
     time.sleep(starttime+recordtime)
-    
+    logger.info(f"killing {emuPid} ")
     emuPid.kill()
     
     if os.path.exists("working/movie.fmf"):
