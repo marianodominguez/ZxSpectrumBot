@@ -25,6 +25,15 @@ def determine_config(full_text, gistUrl):
     basiccode = basiccode.replace("&lt;", "<")
     basiccode = basiccode.replace("&gt;", ">")
     basiccode = basiccode.replace("&amp;", "&")
+    #replace typogrphical quotes
+    lead_double = u"\u201c"
+    follow_double = u"\u201d"
+    lead_single = u"\u2018"
+    follow_single = u"\u2019"
+    basiccode = basiccode.replace(lead_double, '"')
+    basiccode = basiccode.replace(follow_double, '"')
+    basiccode = basiccode.replace(lead_single, "'")
+    basiccode = basiccode.replace(follow_single, "'")
 
     #if url, get code from it
     if gistUrl:
@@ -36,7 +45,7 @@ def determine_config(full_text, gistUrl):
         else:
             basiccode = unidecode(text)
     #look for Debug command
-    exp = "{\w*?D\w*(?:}|\s)" # {D\d\d  D= debug
+    exp = "{\w*?[Dd]\w*(?:}|\s)" # {D\d\d  D= debug
     result = re.search(exp,basiccode)
     if result:  
         config['debug'] = True
@@ -44,7 +53,7 @@ def determine_config(full_text, gistUrl):
         config['debug'] = False
 
     #look for start time command
-    exp = "{\w*?B(\d\d?)\w*(?:}|\s)" # {B\d\d  B= Begin
+    exp = "{\w*?[Bb](\d\d?)\w*(?:}|\s)" # {B\d\d  B= Begin
     result = re.search(exp,basiccode)
     if result:  
         starttime = int(result.group(1))
@@ -53,17 +62,18 @@ def determine_config(full_text, gistUrl):
         starttime = 0
 
     #look for length of time to record command
-    exp = "{\w*?S(\d\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
+    exp = "{\w*?[Ss](\d\d?)\w*(?:}|\s)" # {S\d\d  S= Seconds to record
     result=re.search(exp,basiccode)
     if result:
         recordtime = int(result.group(1))
         logger.info(f" Requests record for {recordtime} seconds")
     else:
         recordtime = 20
-    if recordtime <1:
-        recordtime=20
+        logger.info(f" default for {recordtime} seconds")
+    if recordtime <=1:
+        recordtime=10
         
-    exp = "{\w*?X(\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-20
+    exp = "{\w*?[Xx](\d\d?\d?)\w*(?:}|\s)" # {X\d\d  X= Xelerate speed 1-20
     speed=1
     result=re.search(exp,basiccode)
     if result:
@@ -74,13 +84,13 @@ def determine_config(full_text, gistUrl):
     
     language = 0 # default to BASIC
 
-    exp = "{\w*?A\w*(?:}|\s)" #{A
+    exp = "{\w*?[Aa]\w*(?:}|\s)" #{A
     if re.search(exp,basiccode): 
         language=2 #it's Assembly
         logger.info("it's ASM")
         basiccode = "ORG $8000\n" + basiccode
     
-    exp = "{\w*?Z\w*(?:}|\s)" #{Z
+    exp = "{\w*?[Zz]\w*(?:}|\s)" #{Z
     if re.search(exp,basiccode): 
         language=3 #it's ZX basic
         logger.info("it's ZX basic")
@@ -111,7 +121,7 @@ def determine_config(full_text, gistUrl):
     config['language']   =language
     config['basiccode']  =basiccode
     config['speed']      =speed
-    config['128mode']       =mode128
+    config['128mode']    =mode128
     return config
 
 def check_mentions(api, since_id):
