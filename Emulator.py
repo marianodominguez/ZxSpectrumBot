@@ -90,7 +90,10 @@ def run_emulator(api, tweet, config):
     
     logger.info(f"command: {cmd}, env: {env}")
     emuPid = subprocess.Popen(cmd, env=env)
+    
+    logger.info(f"waiting for {starttime+recordtime} seconds")
     time.sleep(starttime+recordtime)
+    
     emuPid.kill()
     
     if os.path.exists("working/movie.fmf"):
