@@ -102,7 +102,7 @@ def determine_config(full_text, gistUrl):
         logger.info("Using 128k mode")
         
     #remove any { command
-    exp = "{.*}\s*" #{anything till } plus trailing whitespace
+    exp = "{[\w+]*}\s*" #{anything till } plus trailing whitespace
     basiccode = re.sub(exp,'',basiccode)
 
     #whitespace
