@@ -1,2 +1,2 @@
-tweepy
+tweepy>=4.0
 unidecode
