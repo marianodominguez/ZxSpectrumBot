@@ -5,6 +5,7 @@ Description=Speccy Bot
 After=network.target
 
 [Service]
+EnvironmentFile=/etc/Speccybot.cfg
 ExecStart=/usr/bin/python3 -u /home/zxspectrum/bot/SpeccyBot.py
 WorkingDirectory=/home/zxspectrum/bot/
 StandardOutput=inherit
