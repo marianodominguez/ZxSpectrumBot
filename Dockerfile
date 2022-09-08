@@ -19,6 +19,8 @@ RUN cp assets/bas2tap /usr/bin
 RUN cp assets/bin2tap /usr/bin
 
 USER zxspectrum
+ENV ZBXPATH=/home/zxspectrum/zxbasic
+
 RUN wget -q --no-check-certificate http://www.boriel.com/files/zxb/zxbasic-1.16.3-linux64.tar.gz && tar -zxvf zxbasic-1.16.3-linux64.tar.gz 
 
 RUN mkdir -p bot/working
