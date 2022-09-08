@@ -40,7 +40,7 @@ def compile(api, tweet, config):
 
     elif language==3: #ZX BASIC
         logger.info("Making tape image BASIC")
-        result = os.popen('/home/zxspectrum/zxbasic/zxbc -taB -o working/tape.tap working/AUTORUN 2>&1').read()
+        result = os.popen('zxbasic/zxbc -taB -o working/tape.tap working/AUTORUN 2>&1').read()
         logger.debug(result)
         if "error:" in result:
             logger.error("Not a valid ZX BASIC program")
