@@ -1,17 +1,15 @@
-import tweepy
 import logging
 import time
-import os,sys
+import os
 import subprocess
 import TwitterUtil
 
 def compile(api, tweet, config):
-    
     language    = config['language']
     basiccode   = config['basiccode']
-    debug       = config['debug']
-    
+    debug       = config['debug']    
     logger = logging.getLogger()
+    
     if language>0: #not BASIC
         basiccode=basiccode + "\n"
         outputFile = open('working/AUTORUN','w',encoding='latin')
@@ -67,7 +65,6 @@ def compile(api, tweet, config):
         return 1
 
 def run_emulator(api, tweet, config):
-    
     starttime   = config['starttime']
     recordtime  = config['recordtime']
     speed       = config['speed']
