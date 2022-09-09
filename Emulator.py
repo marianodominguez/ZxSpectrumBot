@@ -94,7 +94,7 @@ def run_emulator(api, tweet, config):
     
     logger.info(f"waiting for {starttime+recordtime} seconds")
     time.sleep(starttime+recordtime)
-    cut_time=f'0:00-{starttime//60}:{starttime%60}'
+    cut_time=f'0:00-{starttime//60}:{(starttime%60):02}'
     logger.info(f"cutting: {cut_time} seconds" )
     logger.info(f"killing {emuPid} ")
     emuPid.kill()
