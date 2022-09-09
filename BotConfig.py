@@ -61,7 +61,7 @@ def determine_config(full_text, gistUrl):
         recordtime = int(result.group(1))
         logger.info(f" Requests record for {recordtime} seconds")
     else:
-        recordtime = 30
+        recordtime = 20
         logger.info(f" default for {recordtime} seconds")
     if recordtime <=1:
         recordtime=5
