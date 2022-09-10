@@ -51,7 +51,7 @@ def compile(api, tweet, config):
             logger.error("Not a valid ZX BASIC program")
             logger.error(result)
             if debug:
-                TwitterUtil.reply_tweet(api, tweet, result[:280])
+                TwitterUtil.reply_tweet(api, tweet, result[:200])
             return 1
 
     elif language==2: #ASM
@@ -61,7 +61,7 @@ def compile(api, tweet, config):
             logger.error("assembler code not valid")
             logger.error(asmResult)
             if debug:
-                TwitterUtil.reply_tweet(api, tweet, asmResult[:280])
+                TwitterUtil.reply_tweet(api, tweet, asmResult[:200])
             return 1
         logger.info("Making disk image, moving text ASM")
         result = os.popen('bin2tap working/run.bin working/tape.tap 2>&1').read()
