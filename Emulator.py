@@ -101,7 +101,8 @@ def run_emulator(api, tweet, config):
     
     if os.path.exists("working/movie.fmf"):
         logger.info("converting fmf")
-        result = os.system(f'fmfconv --avi -C {cut_time} working/movie.fmf | ffmpeg -loglevel warning -y -i - -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -strict experimental -r 30 -t 2:20 -acodec aac -vb 1024k -maxrate 1024k -bufsize 1024k -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
+        os.system(f'fmfconv -v --avi-uncompr -C {cut_time} working/movie.fmf -o working/OUTPUT_BIG.mp4')
+        result = os.system(f'ffmpeg -loglevel warning -y -i working/OUTPUT_BIG.mp4 -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -strict experimental -r 30 -t 2:20 -acodec aac -vb 1024k -minrate 1024k -maxrate 1024k -bufsize 1024k -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
         logger.debug(result)
     else:
         logger.error("Emulator was unable to run, skipping video") 
