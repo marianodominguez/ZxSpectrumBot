@@ -61,7 +61,7 @@ def determine_config(full_text, gistUrl):
         recordtime = int(result.group(1))
         logger.info(f" Requests record for {recordtime} seconds")
     else:
-        recordtime = 20
+        recordtime = 30 #it seems shorter times kill the video
         logger.info(f" default for {recordtime} seconds")
     if recordtime <=1:
         recordtime=5
