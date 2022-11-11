@@ -1,2 +1,4 @@
 tweepy>=4.0
 unidecode
+Mastodon.py==1.5.2
+bs4

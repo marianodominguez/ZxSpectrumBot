@@ -1,5 +1,5 @@
 # tweepy-bots/bots/config.py
-import tweepy
+from Backend import Backend
 import logging
 import re
 import os
@@ -116,24 +116,17 @@ def determine_config(full_text, gistUrl):
     config['128mode']    =mode128
     return config
 
-def create_api():
-    consumer_key        = os.getenv('CONSUMER_KEY')
-    consumer_secret     = os.getenv('CONSUMER_SECRET')
-    access_token        = os.getenv('ACCESS_TOKEN')
-    access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
+def create_backend():
+    backend_name  = os.getenv('BACKEND')
 
-    if not access_token_secret:
-        logger.error("Twitter access token missing from env")
-        raise ValueError('Missing credentials')
+    if backend_name  != 'twitter' and backend_name !='mastodon':
+        logger.error("No backend configured in environment")
+        raise ValueError('Missing backend')
 
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth)
-    
+    backend=None
     try:
-        api.verify_credentials()
+        backend=Backend(backend_name)
     except Exception as e:
         logger.error("Error creating API", exc_info=True)
         raise e
-    logger.info("API created")
-    return api
+    return backend
