@@ -6,7 +6,7 @@ from types import SimpleNamespace
 from bs4 import BeautifulSoup
 
 class MastodonApi:
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger()
 
     def get_api(Self, client_id, client_secret, access_token, access_token_secret):
@@ -19,9 +19,9 @@ class MastodonApi:
         media.media_id=mastodon_media.id
         return media
 
-    def update_status(Self, api,message,id, media):
-
-        status= api.status_post(message,in_reply_to_id=id, media_ids=[media.media_id])
+    def update_status(Self, api,toot,id, media):
+        toot = f"@zxspectrumbot@mastodon.cloud ran @{toot.user.name} 's code and obtained: \n "
+        status= api.status_post(toot,in_reply_to_id=id, media_ids=[media.media_id])
         return status
 
     def reply(Self,api, toot, text):
@@ -31,11 +31,10 @@ class MastodonApi:
             if "ERROR"  in line or "error:" in line:
                 msg=msg+line+"\n"
         
-        toot = f"Ran @{toot.user.name} 's code and obtained: \n {msg}"
-        Self.logger.info(f"MSG: {toot}")
+        Self.logger.info(f"MSG: {msg}")
         status = {}
         try: 
-            status = Self.update_status(api,toot.strip(),toot.id)
+            status = api.status_post(toot,in_reply_to_id=toot.id)
         except:
             Self.logger.error(f"Unable to post message: {status}")
 

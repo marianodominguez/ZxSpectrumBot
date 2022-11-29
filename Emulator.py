@@ -116,7 +116,7 @@ def run_emulator(backend, message, config):
         logger.info(f"Media ID is {media.media_id}")
         time.sleep(5)
 
-        logger.info(f"Posting tweet to @{message.user.screen_name}")
+        logger.info(f"Posting to @{message.user.screen_name}")
         tweettext = f"@{message.user.screen_name} "
         backend.update_status(tweettext,message.id,media)
     else:
