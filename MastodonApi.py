@@ -14,11 +14,14 @@ class MastodonApi:
         return api
 
     def media_upload(Self, api,filename):
-        media = None
+        media = SimpleNamespace()
+        mastodon_media = api.media_post(filename,synchronous=True)
+        media.media_id=mastodon_media.id
         return media
 
-    def update_status(Self, api,tweettext,id, media):
-        status= None
+    def update_status(Self, api,message,id, media):
+
+        status= api.status_post(message,in_reply_to_id=id, media_ids=[media.media_id])
         return status
 
     def reply(Self,api, toot, text):
@@ -28,7 +31,7 @@ class MastodonApi:
             if "ERROR"  in line or "error:" in line:
                 msg=msg+line+"\n"
         
-        toot = f"@{toot.user.screen_name} \n {msg}"
+        toot = f"Ran @{toot.user.name} 's code and obtained: \n {msg}"
         Self.logger.info(f"MSG: {toot}")
         status = {}
         try: 
@@ -38,9 +41,10 @@ class MastodonApi:
 
     def get_replies(Self, api, since_id):
         replies={}
-        result=api.search("zxspectrumbot", result_type="statuses",exclude_unreviewed=False, min_id=since_id)
-        Self.logger.debug(f"result: {result.statuses}")
-        for toot in result.statuses:
+        #result=api.search("#zxspectrumbot", result_type="statuses",exclude_unreviewed=False, min_id=since_id)
+        result=api.timeline_hashtag("zxspectrumbot", since_id=since_id)
+        Self.logger.debug(f"result: {result}")
+        for toot in result:
             #parse the message to extract entities
             message=Self.extract_entities(toot.content)
             status=SimpleNamespace()
@@ -62,11 +66,15 @@ class MastodonApi:
     def extract_entities(Self,html_doc):
         message={}
         soup = BeautifulSoup(html_doc, 'html.parser')
+        #Remove mention and hashtag
+        mentions=soup.find_all("a", class_="mention")
+        for m in mentions:
+            m.decompose()
         all_links=soup.find_all('a',attrs={'target':'_blank'} )
         if all_links:
             message['urls']=[]
         for link in all_links:
             message['urls'].append( {'expanded_url': link.get('href')} )
-        expr = re.compile(re.escape("#zspectrumbot"), re.IGNORECASE)
-        message['text']=expr.sub("",soup.get_text())
+        expr = re.compile("#zspectrumbot", re.IGNORECASE)
+        message['text']=expr.sub("",soup.get_text(separator="\n"))
         return message

@@ -5,7 +5,6 @@ import os
 import Emulator
 from datetime import datetime
 import GistManager
-import Backend
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
