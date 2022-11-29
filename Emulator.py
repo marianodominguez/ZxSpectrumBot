@@ -2,9 +2,8 @@ import logging
 import time
 import os
 import subprocess
-import TwitterUtil
 
-def compile(api, tweet, config):
+def compile(backend, message, config):
     language    = config['language']
     basiccode   = config['basiccode']
     debug       = config['debug']    
@@ -35,7 +34,7 @@ def compile(api, tweet, config):
             logger.error("Not a valid BASIC program")
             logger.error(result)
             if debug:
-                TwitterUtil.reply_tweet(api, tweet, result[:280])
+                backend.reply(message, result[:280])
             return 1
         os.popen('zmakebas -a 0 -o working/tape.tap working/AUTORUN  2>&1').read()
 
@@ -51,7 +50,7 @@ def compile(api, tweet, config):
             logger.error("Not a valid ZX BASIC program")
             logger.error(result)
             if debug:
-                TwitterUtil.reply_tweet(api, tweet, result[:200])
+                backend.reply(message, result[:200])
             return 1
 
     elif language==2: #ASM
@@ -61,7 +60,7 @@ def compile(api, tweet, config):
             logger.error("assembler code not valid")
             logger.error(asmResult)
             if debug:
-                TwitterUtil.reply_tweet(api, tweet, asmResult[:200])
+                backend.reply(message, asmResult[:200])
             return 1
         logger.info("Making disk image, moving text ASM")
         result = os.popen('bin2tap working/run.bin working/tape.tap 2>&1').read()
@@ -70,7 +69,7 @@ def compile(api, tweet, config):
         logger.error("Yikes! Langauge not valid")
         return 1
 
-def run_emulator(api, tweet, config):
+def run_emulator(backend, message, config):
     starttime   = config['starttime']
     recordtime  = config['recordtime']
     speed       = config['speed']
@@ -104,7 +103,7 @@ def run_emulator(api, tweet, config):
     if os.path.exists("working/movie.fmf"):
         logger.info("converting fmf")
             
-        os.system(f'fmfconv -v --avi-uncompr -C {cut_time} working/movie.fmf -y -o working/OUTPUT_BIG.mp4')
+        os.system(f'fmfconv --avi-uncompr -C {cut_time} working/movie.fmf -y -o working/OUTPUT_BIG.mp4')
         
         result = os.system(f'ffmpeg -y -i working/OUTPUT_BIG.mp4 -c:v libx264 -sws_flags accurate_rnd -pix_fmt yuv420p -r 30 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -b:v 5M -t 2:20 -acodec aac -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
         logger.debug(result)
@@ -113,12 +112,12 @@ def run_emulator(api, tweet, config):
     
     if os.path.exists("working/OUTPUT_SMALL.mp4"):
         logger.info("Uploading video")  
-        media = api.media_upload("working/OUTPUT_SMALL.mp4", chunked=True, media_category='tweet_video')
+        media = backend.media_upload("working/OUTPUT_SMALL.mp4")
         logger.info(f"Media ID is {media.media_id}")
         time.sleep(5)
 
-        logger.info(f"Posting tweet to @{tweet.user.screen_name}")
-        tweettext = f"@{tweet.user.screen_name} "
-        api.update_status(auto_populate_reply_metadata=False, status=tweettext, media_ids=[media.media_id], in_reply_to_status_id=tweet.id)
+        logger.info(f"Posting tweet to @{message.user.screen_name}")
+        tweettext = f"@{message.user.screen_name} "
+        backend.update_status(tweettext,message.id,media)
     else:
         logger.error("No video to post")

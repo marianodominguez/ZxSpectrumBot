@@ -1,6 +1,5 @@
-import tweepy
 import logging
-from BotConfig import create_api,determine_config
+import BotConfig 
 import time
 import os
 import Emulator
@@ -10,37 +9,37 @@ import GistManager
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
-def check_mentions(api, since_id):
+def check_mentions(backend, since_id):
     logger.info("Retrieving mentions")
     new_since_id = since_id
-    for tweet in tweepy.Cursor(api.mentions_timeline, since_id=since_id, 
-      tweet_mode='extended', include_entities=True).items():
-        new_since_id = max(tweet.id, new_since_id)
+    for message in backend.get_replies(since_id):
+        logger.info(message)
+        new_since_id = max(message.id, new_since_id)
         url=None
         
-        logger.info(f"Tweet from {tweet.user.name}")
-        #if there is an url in text, pass the firs
-        if tweet.entities['urls']:
-            url=tweet.entities['urls'][0]['expanded_url']
+        logger.info(f"Tweet from {message.user.name}")
+        #if there is an url in text, pass the first
+        if 'urls' in message.entities.keys():
+            url=message.entities['urls'][0]['expanded_url']
         if not GistManager.validate(url):
             url=None
-        config=determine_config(tweet.full_text, url)
+        config=BotConfig.determine_config(message.full_text, url)
         
         if config['error']:
             logger.info(config['error'])
             continue
 
-        error=Emulator.compile(api, tweet, config)
+        error=Emulator.compile(backend, message, config)
         if error:
             continue
-        Emulator.run_emulator(api, tweet, config)
+        Emulator.run_emulator(backend, message, config)
         logger.info("Done!")
     return new_since_id
 
 def main():
     os.chdir('/home/zxspectrum/bot/')
 
-    api = create_api()
+    backend = BotConfig.create_backend()
 
     now = datetime.now()
     logger.info("START TIME:")
@@ -62,7 +61,7 @@ def main():
 
     while True:
         didatweet=0
-        new_since_id = check_mentions(api, since_id)
+        new_since_id = check_mentions(backend, since_id)
         if new_since_id != since_id:
             since_id = new_since_id
             logger.info(f"Since_id now {since_id}")     

@@ -4,4 +4,5 @@ _pycache_
 assets/bin2tap
 assets/bas2tap
 bot
-
+.devcontainer/devcontainer.env
+run_local.sh
