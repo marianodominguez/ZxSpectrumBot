@@ -17,7 +17,7 @@ def check_mentions(backend, since_id):
         new_since_id = max(message.id, new_since_id)
         url=None
         
-        logger.info(f"Tweet from {message.user.name}")
+        logger.info(f"Mention from {message.user.name}")
         #if there is an url in text, pass the first
         if 'urls' in message.entities.keys():
             url=message.entities['urls'][0]['expanded_url']

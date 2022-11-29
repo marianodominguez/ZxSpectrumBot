@@ -18,7 +18,7 @@ class TwitterApi:
         return media
 
     def update_status(Self, api,tweettext,id, media):
-        status = api.update_status(auto_populate_reply_metadata=False, status=tweettext.strip(), media_ids=    [media.media_id], in_reply_to_status_id=id)
+        status = api.update_status(auto_populate_reply_metadata=False, status=tweettext.strip(), media_ids=[media.media_id], in_reply_to_status_id=id)
         return status
 
     def reply(Self,api,tweet,text):

@@ -19,9 +19,8 @@ class MastodonApi:
         media.media_id=mastodon_media.id
         return media
 
-    def update_status(Self, api,toot,id, media):
-        toot = f"@zxspectrumbot@mastodon.cloud ran @{toot.user.name} 's code and obtained: \n "
-        status= api.status_post(toot,in_reply_to_id=id, media_ids=[media.media_id])
+    def update_status(Self, api,text,id, media):
+        status= api.status_post(text,in_reply_to_id=id, media_ids=[media.media_id])
         return status
 
     def reply(Self,api, toot, text):

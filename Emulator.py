@@ -114,10 +114,9 @@ def run_emulator(backend, message, config):
         logger.info("Uploading video")  
         media = backend.media_upload("working/OUTPUT_SMALL.mp4")
         logger.info(f"Media ID is {media.media_id}")
-        time.sleep(5)
 
         logger.info(f"Posting to @{message.user.screen_name}")
-        tweettext = f"@{message.user.screen_name} "
-        backend.update_status(tweettext,message.id,media)
+        msg = f"@zxspectrumbot@mastodon.cloud ran @{message.user.name} 's code and obtained: \n "
+        backend.update_status(msg,message.id,media)
     else:
         logger.error("No video to post")
