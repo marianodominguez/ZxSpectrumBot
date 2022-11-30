@@ -20,6 +20,9 @@ RUN cp assets/bin2tap /usr/bin
 
 USER zxspectrum
 ENV ZBXPATH=/home/zxspectrum/zxbasic
+ENV DISPLAY=:99
+ENV SDL_AUDIODRIVER=dummy
+ENV PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/usr/local/sbin
 
 RUN wget -q --no-check-certificate http://www.boriel.com/files/zxb/zxbasic-1.16.3-linux64.tar.gz && tar -zxvf zxbasic-1.16.3-linux64.tar.gz 
 
