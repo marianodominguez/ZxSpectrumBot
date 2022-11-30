@@ -86,12 +86,9 @@ def run_emulator(backend, message, config):
     
     cmd = f'/usr/bin/fuse-sdl {rom} --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start ''working/movie.fmf'' --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
     
-    env={}
-    env["DISPLAY"]=":99"
-    env["SDL_AUDIODRIVER"]='dummy'
-    
-    logger.info(f"command: {cmd}, env: {env}")
-    emuPid = subprocess.Popen(cmd, env=env)
+  
+    logger.info(f"command: {cmd}")
+    emuPid = subprocess.Popen(cmd)
     
     logger.info(f"waiting for {starttime+recordtime} seconds")
     time.sleep(starttime+recordtime)
