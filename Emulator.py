@@ -99,9 +99,7 @@ def run_emulator(backend, message, config):
     if os.path.exists("working/movie.fmf"):
         logger.info("converting fmf")
         
-        os.system(f'fmfconv -C {cut_time} working/movie.fmf -y -o working/OUTPUT_BIG.mp4')
-        
-        result = os.system(f'ffmpeg -y -i working/OUTPUT_BIG.mp4 -c:v libx264 -sws_flags accurate_rnd -pix_fmt yuv420p -r 30 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -b:v 5M -t 2:20 -acodec aac -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
+        result = os.system(f'fmfconv -C {cut_time} working/movie.fmf | ffmpeg -y -i working/OUTPUT_BIG.mp4 -c:v libx264 -sws_flags accurate_rnd -pix_fmt yuv420p -r 30 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -b:v 5M -t 2:20 -acodec aac -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
         logger.debug(result)
     else:
         logger.error("Emulator was unable to run, skipping video") 
