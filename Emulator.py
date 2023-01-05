@@ -84,7 +84,7 @@ def run_emulator(backend, message, config):
     if config['128mode']==1:
         rom="--machine 128"
     
-    cmd = f'fuse {rom} --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start working/movie.fmf --movie-compr None  --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
+    cmd = f'fuse {rom} --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start working/movie.fmf --movie-compr None --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
     
     logger.info(f"command: {cmd}")
     emuPid = subprocess.Popen(cmd)
@@ -99,7 +99,7 @@ def run_emulator(backend, message, config):
     if os.path.exists("working/movie.fmf"):
         logger.info("converting fmf")
         
-        result = os.system(f'fmfconv -C {cut_time} working/movie.fmf | ffmpeg -i - -y -c:v libx264 -sws_flags accurate_rnd -pix_fmt yuv420p -r 30 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -b:v 5M -t 2:20 -acodec aac -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
+        result = os.system(f'fmfconv -C {cut_time} working/movie.fmf | ffmpeg -i - -y -c:v libx264 -sws_flags accurate_rnd -pix_fmt yuv420p -r 30 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2:scale=1440:1080" -b:v 5M -t 2:20 -acodec aac -ar 44100 -ac 2 working/OUTPUT_SMALL.mp4')
         logger.debug(result)
     else:
         logger.error("Emulator was unable to run, skipping video") 
