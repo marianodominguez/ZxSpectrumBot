@@ -37,13 +37,8 @@ def determine_config(full_text, gistUrl):
             return config
         else:
             basiccode = unidecode(text)
-    #look for Debug command
-    exp = "{.*[Dd].*}" # {D\d\d  D= debug
-    result = re.search(exp,basiccode)
-    if result:
-        config['debug'] = True
-    else:
-        config['debug'] = False
+    #by default, debug this does not spam as we are using hashtag 
+    config['debug'] = True
 
     #look for start time command
     exp = "{.*[Bb](\d\d?).*}" # {B\d\d  B= Begin

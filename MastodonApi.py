@@ -33,7 +33,7 @@ class MastodonApi:
         Self.logger.info(f"MSG: {msg}")
         status = {}
         try: 
-            status = api.status_post(toot,in_reply_to_id=toot.id)
+            status = api.status_post(msg,in_reply_to_id=toot.id)
         except:
             Self.logger.error(f"Unable to post message: {status}")
 
