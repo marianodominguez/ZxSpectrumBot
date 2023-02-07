@@ -84,7 +84,7 @@ def run_emulator(backend, message, config):
     if config['128mode']==1:
         rom="--machine 128"
 
-    cmd = f'fuse {rom} --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start working/movie.fmf --movie-compr None --rate {speed*2} --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
+    cmd = f'fuse {rom} --fbmode 640 --graphics-filter 2x --speed {speed*100} --no-confirm-actions --no-autosave-settings --auto-load --movie-start working/movie.fmf --movie-compr None --rate 2 --sound-freq 44100 --separation ACB --tape working/tape.tap'.split()
 
     logger.info(f"command: {cmd}")
     emuPid = subprocess.Popen(cmd)
