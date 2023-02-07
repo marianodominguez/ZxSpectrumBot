@@ -31,19 +31,19 @@ def determine_config(full_text, gistUrl):
     #if url, get code from it
     if gistUrl:
         text = GistManager.getGist(gistUrl)
-        if text.startswith("Error: "): 
+        if text.startswith("Error: "):
             logger.info(f"unable to retrieve {gistUrl}, {text}")
             config['error']=text
             return config
         else:
             basiccode = unidecode(text)
-    #by default, debug this does not spam as we are using hashtag 
+    #by default, debug this does not spam as we are using hashtag
     config['debug'] = True
 
     #look for start time command
     exp = "{.*[Bb](\d\d?).*}" # {B\d\d  B= Begin
     result = re.search(exp,basiccode)
-    if result:  
+    if result:
         starttime = int(result.group(1))
         logger.info(f" Requests start at {starttime} seconds")
     else:
@@ -60,35 +60,35 @@ def determine_config(full_text, gistUrl):
         logger.info(f" default for {recordtime} seconds")
     if recordtime <=1:
         recordtime=5
-        
+
     exp = "{.*[Xx](\d\d?\d?).*}" # {X\d\d  X= Xelerate speed 1-20
     speed=1
     result=re.search(exp,basiccode)
     if result:
         speed = int(result.group(1))
         logger.info(f" Accelerate {speed*100} %")
-    if speed>99: speed=20
+    if speed>100: speed=100
     if speed<1: speed=1
-    
+
     language = 0 # default to BASIC
 
     exp = "{.*[Aa].*}" #{A
-    if re.search(exp,basiccode): 
+    if re.search(exp,basiccode):
         language=2 #it's Assembly
         logger.info("it's ASM")
         basiccode = "ORG $8000\n" + basiccode
-    
+
     exp = "{.*[Zz].*}" #{Z
-    if re.search(exp,basiccode): 
+    if re.search(exp,basiccode):
         language=3 #it's ZX basic
         logger.info("it's ZX basic")
 
     mode128=0
     exp = "{.*\+.*}" #{+ for 128 k mode
-    if re.search(exp,basiccode): 
+    if re.search(exp,basiccode):
         mode128=1
         logger.info("Using 128k mode")
-        
+
     #remove any { command
     exp = "{[\w+]*}\s*" #{anything till } plus trailing whitespace
     basiccode = re.sub(exp,'',basiccode)
@@ -96,13 +96,13 @@ def determine_config(full_text, gistUrl):
     #whitespace
     basiccode = basiccode.strip()
     logger.debug(f"Code: [{basiccode}]")
-    
+
     #halt if string is empty
     if not basiccode:
         logger.info("!!! basiccode string is empty, SKIPPING")
         config['error']="Error: Empty code"
         return config
-    
+
     config['starttime']  =starttime
     config['recordtime'] =recordtime
     config['language']   =language
