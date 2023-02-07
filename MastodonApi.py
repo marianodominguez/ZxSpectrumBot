@@ -24,15 +24,15 @@ class MastodonApi:
         return status
 
     def reply(Self,api, toot, text):
-        
+
         msg=" "
         for line in text.split("\n"):
             if "ERROR"  in line or "error:" in line:
                 msg=msg+line+"\n"
-        
+
         Self.logger.info(f"MSG: {msg}")
         status = {}
-        try: 
+        try:
             status = api.status_post(msg,in_reply_to_id=toot.id)
         except:
             Self.logger.error(f"Unable to post message: {status}")
