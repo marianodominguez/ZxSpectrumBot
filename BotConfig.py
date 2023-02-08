@@ -67,7 +67,7 @@ def determine_config(full_text, gistUrl):
     if result:
         speed = int(result.group(1))
         logger.info(f" Accelerate {speed*100} %")
-    if speed>100: speed=100
+    if speed>999: speed=999
     if speed<1: speed=1
 
     language = 0 # default to BASIC
