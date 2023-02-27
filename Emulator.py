@@ -2,6 +2,7 @@ import logging
 import time
 import os
 import subprocess
+import shutil
 
 def compile(backend, message, config):
     language    = config['language']
@@ -54,7 +55,6 @@ def compile(backend, message, config):
             return 1
 
     elif language==2: #ASM
-        #todo run assembler code and use bin2tap
         asmResult = os.popen('z80asm working/AUTORUN -o working/run.bin 2>&1').read()
         if "error: " in asmResult:
             logger.error("assembler code not valid")
@@ -65,6 +65,12 @@ def compile(backend, message, config):
         logger.info("Making disk image, moving text ASM")
         result = os.popen('bin2tap working/run.bin working/tape.tap 2>&1').read()
 
+    elif language==3: #Logo
+            time.sleep(7) #time to boot before typing
+            logger.info("Adding logo program to tape")
+            shutil.copy('lib/LOGO.TAP','working/tape.tap')
+            result = os.popen('bin2tap working/AUTORUN.LOG working/tape.tap 49722 2>&1').read()
+            #os.system('xdotool search --class atari type --delay 200 \'LOAD "D:PROG\r\'')
     else:
         logger.error("Yikes! Langauge not valid")
         return 1
