@@ -98,13 +98,13 @@ def run_emulator(backend, message, config):
 
     if os.path.exists("working/movie.fmf"):
         logger.info("converting fmf")
-        speed_rate=",fps=30"
+        speed_rate="fps=30"
         audio_opts="-acodec aac -ar 44100 -ac 2"
         if speed>1:
-            speed_rate=f",framestep={speed},setpts=PTS/{speed},fps=30"
+            speed_rate=f"framestep={speed},setpts=PTS/{speed},fps=30"
             audio_opts="-an"
 
-        video_cmd=f'fmfconv -C {cut_time} working/movie.fmf | ffmpeg -i - -y -c:v libx264 -pix_fmt yuv420p -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2,scale=1440:1080{speed_rate}" -b:v 5M -t 2:20 {audio_opts} working/OUTPUT_SMALL.mp4'
+        video_cmd=f'fmfconv -C {cut_time} working/movie.fmf | ffmpeg -i - -y -c:v libx264 -pix_fmt yuv420p -vf "{speed_rate},pad=ceil(iw/2)*2:ceil(ih/2)*2,scale=1440:1080" -b:v 5M -t 2:20 {audio_opts} working/OUTPUT_SMALL.mp4'
 
         logger.info(video_cmd)
         result = os.system(video_cmd)
