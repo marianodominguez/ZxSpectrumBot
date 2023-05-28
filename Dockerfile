@@ -7,7 +7,7 @@ COPY repos/nonfree.repo /etc/apt/sources.list.d/nonfree.list
 
 RUN useradd zxspectrum -d /home/zxspectrum
 RUN apt-get update
-RUN apt-get install -yq fuse-emulator-common xvfb fuse-emulator-utils spectrum-roms fuse-emulator-sdl ffmpeg zmakebas z80asm fuse 
+RUN apt-get install -yq fuse-emulator-common xvfb fuse-emulator-utils spectrum-roms fuse-emulator-sdl ffmpeg zmakebas z80asm fuse xdotool
 
 COPY --chown=zxspectrum . /home/zxspectrum
 WORKDIR /home/zxspectrum
@@ -24,9 +24,9 @@ ENV DISPLAY=:99
 ENV SDL_AUDIODRIVER=dummy
 ENV PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/usr/local/sbin
 
-RUN wget -q --no-check-certificate http://www.boriel.com/files/zxb/zxbasic-1.16.3-linux64.tar.gz && tar -zxvf zxbasic-1.16.3-linux64.tar.gz 
+RUN wget -q --no-check-certificate http://www.boriel.com/files/zxb/zxbasic-1.16.3-linux64.tar.gz && tar -zxvf zxbasic-1.16.3-linux64.tar.gz
 
 RUN mkdir -p bot/working
 RUN pip3 install -r requirements.txt
 
-CMD ./start.sh 
+CMD ./start.sh
