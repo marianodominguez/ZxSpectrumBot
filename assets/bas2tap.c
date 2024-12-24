@@ -232,6 +232,8 @@ struct TokenMap_s
    {"FOR",       1, { 4, '=', 6, 0xCC, 6, 0xCD, 6, 0 }},                                /* (Special: STEP (0xCD) is not required) */
    {"GO TO",     1, { 6, 0 }},
    {"GO SUB",    1, { 6, 0 }},
+   {"GOTO",     1, { 6, 0 }},
+   {"GOSUB",    1, { 6, 0 }},
    {"INPUT",     1, { 5, 0 }},
    {"LOAD",      1, { 11, 0 }},
    {"LIST",      1, { 3, 0 }},
